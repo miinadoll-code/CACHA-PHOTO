@@ -165,6 +165,36 @@
     padding:8px 6px; font-size:11px; background:#fff; border:1px solid var(--line); cursor:pointer; white-space:nowrap;
   }
   .btn-quicksoldout.is-soldout{background:var(--danger); color:#fff; border-color:var(--danger);}
+  .btn-restock{padding:8px 6px; font-size:11px; background:var(--sage); color:#fff; border:1px solid var(--sage); cursor:pointer; white-space:nowrap;}
+  .stock-badge{font-size:10px; color:var(--ink-soft); margin-top:-2px;}
+
+  .media-badge{
+    position:absolute; bottom:10px; left:10px; background:rgba(51,47,40,0.7); color:#fff;
+    font-size:10px; padding:3px 7px; border-radius:10px; z-index:2; display:flex; gap:4px; align-items:center;
+  }
+  .card .img-wrap{position:relative; cursor:pointer;}
+
+  .media-gallery{display:flex; flex-wrap:wrap; gap:14px 10px; margin-top:8px;}
+  .gallery-thumb-item{position:relative; width:64px;}
+  .gallery-thumb-item img{width:64px; height:82px; object-fit:cover; border:1px solid var(--line); display:block;}
+  .gallery-thumb-item .cover-badge{
+    position:absolute; bottom:2px; left:2px; background:var(--sage); color:#fff; font-size:9px; padding:1px 5px; border-radius:6px;
+  }
+  .gallery-thumb-item .thumb-del{
+    position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:var(--danger); color:#fff;
+    border:none; font-size:11px; cursor:pointer; line-height:1;
+  }
+  .gallery-thumb-item .thumb-color-tag{
+    width:64px; margin-top:3px; font-size:9px; padding:2px; border-radius:3px;
+    border:1px solid var(--line); background:#fff;
+  }
+
+  .gallery-main{width:100%; aspect-ratio:3/4; background:#e4dfd3; overflow:hidden; border:1px solid var(--line);}
+  .gallery-main img, .gallery-main video{width:100%; height:100%; object-fit:cover; display:block;}
+  .gallery-thumbs{display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:2px;}
+  .gallery-thumbs .g-thumb{width:50px; height:64px; object-fit:cover; border:2px solid transparent; cursor:pointer; flex-shrink:0;}
+  .gallery-thumbs .g-thumb.active{border-color:var(--sage);}
+  .gallery-thumbs .g-thumb.is-video{display:flex; align-items:center; justify-content:center; background:var(--ink); color:#fff; font-size:16px;}
 
   .orders-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:10px;}
   .orders-table th, .orders-table td{border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top;}
@@ -270,7 +300,7 @@
       <h3>我的清單</h3>
       <div class="sub">確認品項後，填寫聯絡資訊送出登記</div>
       <div id="cartItems"></div>
-      <div class="cart-total"><span>預估總額</span><span id="cartTotal">NT$ 0</span></div>
+      <div class="cart-total"><span>總金額</span><span id="cartTotal">NT$ 0</span></div>
       <div class="form-err" id="cartErr"></div>
       <div id="orderFormMessage" style="display:none; font-size:13px; background:var(--paper); padding:10px 12px; border-radius:var(--radius); margin-bottom:14px; white-space:pre-line;"></div>
       <form id="cartForm">
@@ -322,13 +352,23 @@
         </div>
       </div>
       <div class="field">
-        <label>商品照片 *</label>
-        <input type="file" id="pImageFile" accept="image/*">
-        <div id="pImagePreviewWrap" style="margin-top:8px; display:none;">
-          <img id="pImagePreview" style="width:100px; height:130px; object-fit:cover; border:1px solid var(--line);">
-        </div>
+        <label>商品照片（可一次選多張，第一張是封面）*</label>
+        <input type="file" id="pImageFiles" accept="image/*" multiple>
+        <div class="media-gallery" id="pImageGallery"></div>
         <div id="pImageUploadStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
-        <input type="hidden" id="pImage" required>
+      </div>
+      <div class="field">
+        <label>商品短影片（選填，建議 30 秒內，檔案太大上傳會較久）</label>
+        <input type="file" id="pVideoFile" accept="video/*">
+        <div id="pVideoPreviewWrap" style="margin-top:8px; display:none;">
+          <video id="pVideoPreview" controls style="width:160px; display:block; border:1px solid var(--line);"></video>
+          <span class="manage-link" id="removeVideoBtn" style="color:var(--danger);">移除影片</span>
+        </div>
+        <div id="pVideoUploadStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
+      </div>
+      <div class="field">
+        <label>庫存數量（選填，留空 = 不追蹤數量，改用下面手動標記售完）</label>
+        <input type="number" id="pStockQty" min="0" placeholder="例如：10">
       </div>
       <div class="field">
         <label>顏色（勾選這件商品有的顏色，可不選）</label>
@@ -349,6 +389,19 @@
       <button type="submit" class="submit-btn">儲存商品</button>
       <button type="button" id="deleteProductBtn" style="display:none; width:100%; margin-top:8px; padding:10px; background:#fff; border:1px solid var(--danger); color:var(--danger); cursor:pointer; border-radius:2px;">刪除此商品</button>
     </form>
+  </div>
+</div>
+
+<!-- 商品相簿瀏覽 modal -->
+<div class="overlay" id="galleryOverlay">
+  <div class="modal">
+    <button class="close" data-close="galleryOverlay">✕</button>
+    <div class="gallery-main" id="galleryMain"></div>
+    <div class="gallery-thumbs" id="galleryThumbs"></div>
+    <h3 id="galleryName" style="margin:14px 0 2px;"></h3>
+    <div class="price" id="galleryPrice" style="font-family:'Noto Serif TC',serif; font-weight:700; font-size:16px;"></div>
+    <div class="pick-row" id="galleryPickRow" style="margin-top:10px;"></div>
+    <button class="submit-btn" id="galleryAddBtn">加入清單</button>
   </div>
 </div>
 
@@ -507,6 +560,27 @@ async function loadOrders(){
 }
 
 /* ---------- render ---------- */
+function isSoldOut(p){
+  return !!p.sold_out || (p.stock_qty != null && p.stock_qty <= 0);
+}
+function galleryOf(p){
+  if(p.photo_gallery && p.photo_gallery.length) return p.photo_gallery;
+  if(p.images && p.images.length) return p.images.map(u => ({ url:u, color:'' }));
+  if(p.image) return [{ url:p.image, color:'' }];
+  return [];
+}
+function photosForColor(p, color){
+  const gallery = galleryOf(p);
+  if(!color) return gallery;
+  const matched = gallery.filter(g => g.color === color);
+  if(matched.length) return matched;
+  const generic = gallery.filter(g => !g.color);
+  return generic.length ? generic : gallery;
+}
+function coverImage(p, color){
+  const photos = photosForColor(p, color || '');
+  return (photos[0] && photos[0].url) || '';
+}
 function renderBrand(){
   document.getElementById('brandName').textContent = state.settings.brand_name;
   document.getElementById('brandTag').textContent = state.settings.brand_tag;
@@ -536,25 +610,32 @@ function renderGrid(){
   grid.innerHTML = list.map(p => {
     const colors = p.colors || [];
     const sizes = p.sizes || [];
-    const hasPicks = colors.length > 0 || sizes.length > 0;
+    const gallery = galleryOf(p);
+    const soldOut = isSoldOut(p);
+    const mediaCount = gallery.length + (p.video_url ? 1 : 0);
     return `
     <div class="card">
       <span class="tag-corner"></span>
-      ${p.sold_out ? '<span class="soldout-badge">已售完</span>' : ''}
-      <img src="${escAttr(p.image)}" alt="${escAttr(p.name)}" loading="lazy" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
+      ${soldOut ? '<span class="soldout-badge">已售完</span>' : ''}
+      <div class="img-wrap" data-open-gallery="${p.id}">
+        <img src="${escAttr(coverImage(p, colors[0]))}" alt="${escAttr(p.name)}" loading="lazy" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
+        ${mediaCount > 1 ? `<span class="media-badge">${p.video_url ? '▶ ' : ''}${gallery.length > 1 ? '📷 '+gallery.length : ''}</span>` : ''}
+      </div>
       <div class="info">
         ${p.note ? `<div class="note">${escHtml(p.note)}</div>` : ''}
         <div class="name">${escHtml(p.name)}</div>
         <div class="price">NT$ ${Number(p.price).toLocaleString()}</div>
+        ${state.adminMode ? `<div class="stock-badge">${p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存'}・已售 ${p.sold_count||0} 件</div>` : ''}
         <div class="pick-row">
-          ${colors.length ? `<select data-color-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>${colors.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
-          ${sizes.length ? `<select data-size-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>${sizes.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
-          <input type="number" min="1" value="1" data-qty-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>
+          ${colors.length ? `<select data-color-of="${p.id}" ${soldOut ? 'disabled' : ''}>${colors.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+          ${sizes.length ? `<select data-size-of="${p.id}" ${soldOut ? 'disabled' : ''}>${sizes.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+          <input type="number" min="1" ${p.stock_qty!=null ? `max="${p.stock_qty}"` : ''} value="1" data-qty-of="${p.id}" ${soldOut ? 'disabled' : ''}>
         </div>
         <div class="actions">
-          <button class="btn-register" ${p.sold_out ? 'disabled' : ''} data-add="${p.id}">${p.sold_out ? '已售完' : '加入清單'}</button>
+          <button class="btn-register" ${soldOut ? 'disabled' : ''} data-add="${p.id}">${soldOut ? '已售完' : '加入清單'}</button>
           ${state.adminMode ? `<button class="btn-edit" data-edit="${p.id}">編輯</button>` : ''}
-          ${state.adminMode ? `<button class="btn-quicksoldout ${p.sold_out?'is-soldout':''}" data-quick-soldout="${p.id}">${p.sold_out ? '補貨' : '標售完'}</button>` : ''}
+          ${state.adminMode ? `<button class="btn-quicksoldout ${p.sold_out?'is-soldout':''}" data-quick-soldout="${p.id}">${p.sold_out ? '取消標記' : '標售完'}</button>` : ''}
+          ${state.adminMode && p.stock_qty!=null ? `<button class="btn-restock" data-restock="${p.id}">+ 進貨</button>` : ''}
         </div>
       </div>
     </div>
@@ -566,11 +647,44 @@ function renderGrid(){
   grid.querySelectorAll('[data-edit]').forEach(btn=>{
     btn.addEventListener('click', ()=> openProductModal(btn.dataset.edit));
   });
+  grid.querySelectorAll('[data-open-gallery]').forEach(el=>{
+    el.addEventListener('click', ()=>{
+      const id = el.dataset.openGallery;
+      const card = el.closest('.card');
+      const colorSel = card ? card.querySelector(`[data-color-of="${id}"]`) : null;
+      openGallery(id, colorSel ? colorSel.value : '');
+    });
+  });
+  grid.querySelectorAll('[data-color-of]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      const id = sel.dataset.colorOf;
+      const p = state.products.find(x=>x.id===id);
+      if(!p) return;
+      const card = sel.closest('.card');
+      const img = card ? card.querySelector('.img-wrap img') : null;
+      if(img) img.src = coverImage(p, sel.value);
+    });
+  });
   grid.querySelectorAll('[data-quick-soldout]').forEach(btn=>{
     btn.addEventListener('click', async ()=>{
       const id = btn.dataset.quickSoldout;
       const p = state.products.find(x=>x.id===id);
       const { error } = await sb.from('products').update({ sold_out: !p.sold_out }).eq('id', id);
+      if(error){ alert('更新失敗：'+error.message); return; }
+      await loadProducts();
+      renderGrid();
+    });
+  });
+  grid.querySelectorAll('[data-restock]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.restock;
+      const p = state.products.find(x=>x.id===id);
+      const input = prompt('這次進貨要新增幾件到庫存？（目前庫存：'+(p.stock_qty??0)+'）', '10');
+      if(input===null) return;
+      const addQty = Number(input);
+      if(!Number.isFinite(addQty) || addQty<=0){ alert('請輸入正確的數字'); return; }
+      const newQty = (p.stock_qty||0) + addQty;
+      const { error } = await sb.from('products').update({ stock_qty:newQty }).eq('id', id);
       if(error){ alert('更新失敗：'+error.message); return; }
       await loadProducts();
       renderGrid();
@@ -582,17 +696,19 @@ function renderGrid(){
 function addToCart(productId, btnEl){
   const p = state.products.find(x=>x.id===productId);
   if(!p) return;
-  const colorSel = document.querySelector(`[data-color-of="${productId}"]`);
-  const sizeSel = document.querySelector(`[data-size-of="${productId}"]`);
-  const qtyInput = document.querySelector(`[data-qty-of="${productId}"]`);
+  const scope = btnEl ? (btnEl.closest('.card, .modal') || document) : document;
+  const colorSel = scope.querySelector(`[data-color-of="${productId}"]`);
+  const sizeSel = scope.querySelector(`[data-size-of="${productId}"]`);
+  const qtyInput = scope.querySelector(`[data-qty-of="${productId}"]`);
   const color = colorSel ? colorSel.value : '';
   const size = sizeSel ? sizeSel.value : '';
   const variant = [color, size].filter(Boolean).join(' / ') || '均碼';
   const qty = Math.max(1, Number(qtyInput ? qtyInput.value : 1) || 1);
+  const cover = coverImage(p, color);
 
   const existing = state.cart.find(c => c.productId===productId && c.variant===variant);
   if(existing){ existing.qty += qty; } else {
-    state.cart.push({ cartId: cryptoId(), productId, name:p.name, price:p.price, image:p.image, variant, qty });
+    state.cart.push({ cartId: cryptoId(), productId, name:p.name, price:p.price, image:cover, variant, qty });
   }
   saveCart();
   updateCartBadge();
@@ -608,6 +724,83 @@ function updateCartBadge(){
   const count = state.cart.reduce((s,c)=>s+c.qty,0);
   document.getElementById('cartBadge').textContent = count;
 }
+
+/* ---------- product gallery (multi photo / video, filtered by color) ---------- */
+let galleryProductId = null;
+let galleryColor = '';
+let galleryMedia = [];
+let galleryIndex = 0;
+
+function rebuildGalleryMedia(p){
+  const photos = photosForColor(p, galleryColor);
+  galleryMedia = [
+    ...photos.map(m => ({ type:'image', url:m.url })),
+    ...(p.video_url ? [{ type:'video', url:p.video_url }] : [])
+  ];
+  galleryIndex = 0;
+}
+
+function openGallery(productId, initialColor){
+  const p = state.products.find(x=>x.id===productId);
+  if(!p) return;
+  galleryProductId = productId;
+  galleryColor = initialColor || (p.colors && p.colors[0]) || '';
+  rebuildGalleryMedia(p);
+  document.getElementById('galleryName').textContent = p.name;
+  document.getElementById('galleryPrice').textContent = 'NT$ ' + Number(p.price).toLocaleString();
+  renderGalleryMain();
+  renderGalleryThumbs();
+  renderGalleryPickRow(p);
+  showOverlay('galleryOverlay');
+}
+
+function renderGalleryMain(){
+  const main = document.getElementById('galleryMain');
+  const m = galleryMedia[galleryIndex];
+  if(!m){ main.innerHTML = ''; return; }
+  main.innerHTML = m.type === 'video'
+    ? `<video src="${escAttr(m.url)}" controls playsinline></video>`
+    : `<img src="${escAttr(m.url)}" alt="">`;
+}
+function renderGalleryThumbs(){
+  const wrap = document.getElementById('galleryThumbs');
+  if(galleryMedia.length <= 1){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = galleryMedia.map((m,i) =>
+    m.type === 'video'
+      ? `<div class="g-thumb is-video ${i===galleryIndex?'active':''}" data-gidx="${i}">▶</div>`
+      : `<img class="g-thumb ${i===galleryIndex?'active':''}" data-gidx="${i}" src="${escAttr(m.url)}">`
+  ).join('');
+  wrap.querySelectorAll('[data-gidx]').forEach(el=>{
+    el.addEventListener('click', ()=>{ galleryIndex = Number(el.dataset.gidx); renderGalleryMain(); renderGalleryThumbs(); });
+  });
+}
+function renderGalleryPickRow(p){
+  const colors = p.colors || [];
+  const sizes = p.sizes || [];
+  const soldOut = isSoldOut(p);
+  const wrap = document.getElementById('galleryPickRow');
+  wrap.innerHTML = `
+    ${colors.length ? `<select data-color-of="${p.id}" ${soldOut?'disabled':''}>${colors.map(v=>`<option ${v===galleryColor?'selected':''}>${escHtml(v)}</option>`).join('')}</select>` : ''}
+    ${sizes.length ? `<select data-size-of="${p.id}" ${soldOut?'disabled':''}>${sizes.map(v=>`<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+    <input type="number" min="1" ${p.stock_qty!=null?`max="${p.stock_qty}"`:''} value="1" data-qty-of="${p.id}" ${soldOut?'disabled':''}>
+  `;
+  const colorSelInModal = wrap.querySelector(`[data-color-of="${p.id}"]`);
+  if(colorSelInModal){
+    colorSelInModal.addEventListener('change', ()=>{
+      galleryColor = colorSelInModal.value;
+      rebuildGalleryMedia(p);
+      renderGalleryMain();
+      renderGalleryThumbs();
+    });
+  }
+  const addBtn = document.getElementById('galleryAddBtn');
+  addBtn.disabled = soldOut;
+  addBtn.textContent = soldOut ? '已售完' : '加入清單';
+}
+document.getElementById('galleryAddBtn').addEventListener('click', ()=>{
+  if(!galleryProductId) return;
+  addToCart(galleryProductId, document.getElementById('galleryAddBtn'));
+});
 
 function renderCart(){
   const wrap = document.getElementById('cartItems');
@@ -686,20 +879,28 @@ document.getElementById('cartForm').addEventListener('submit', async e=>{
     customer_name: document.getElementById('ordName').value.trim(),
     phone: document.getElementById('ordPhone').value.trim(),
     note: document.getElementById('ordNote').value.trim(),
-    items: state.cart.map(c => ({ productName:c.name, variant:c.variant, qty:c.qty, price:c.price })),
+    items: state.cart.map(c => ({ productId:c.productId, productName:c.name, variant:c.variant, qty:c.qty, price:c.price })),
     custom_data: (state.settings.custom_fields || []).reduce((acc, f) => {
       const el = document.querySelector(`[data-custom-field="${f.id}"]`);
       acc[f.label] = el ? el.value.trim() : '';
       return acc;
     }, {})
   };
-  const { error } = await sb.from('orders').insert(order);
+  const { error } = await sb.rpc('place_order', {
+    p_customer_name: order.customer_name,
+    p_phone: order.phone,
+    p_note: order.note,
+    p_items: order.items,
+    p_custom_data: order.custom_data
+  });
   btn.disabled = false; btn.textContent = '送出登記';
   if(error){
-    errEl.textContent = '送出失敗，請檢查網路連線後再試一次（'+error.message+'）';
+    errEl.textContent = error.message || '送出失敗，請檢查網路連線後再試一次';
     errEl.classList.add('show');
     return;
   }
+  await loadProducts();
+  renderGrid();
   state.cart = [];
   saveCart();
   updateCartBadge();
@@ -984,6 +1185,7 @@ function renderProductFormChecks(){
   colorWrap.querySelectorAll('[data-color-check]').forEach(cb=>{
     cb.addEventListener('change', ()=>{
       selectedColors = [...colorWrap.querySelectorAll('[data-color-check]:checked')].map(x=>x.value);
+      renderImageGallery();
     });
   });
   sizeWrap.querySelectorAll('[data-size-check]').forEach(cb=>{
@@ -995,7 +1197,7 @@ function renderProductFormChecks(){
 
 document.getElementById('addProductBtn').addEventListener('click', ()=> openProductModal(null));
 
-/* ---------- photo upload ---------- */
+/* ---------- photo / video upload ---------- */
 async function uploadProductImage(file){
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
   const path = `products/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
@@ -1005,23 +1207,83 @@ async function uploadProductImage(file){
   return data.publicUrl;
 }
 
-document.getElementById('pImageFile').addEventListener('change', async (e)=>{
+let currentImages = []; // [{url, color}]
+let currentVideoUrl = '';
+
+function renderImageGallery(){
+  const wrap = document.getElementById('pImageGallery');
+  wrap.innerHTML = currentImages.map((img,i) => `
+    <div class="gallery-thumb-item">
+      <img src="${escAttr(img.url)}">
+      ${i===0 ? '<span class="cover-badge">封面</span>' : ''}
+      <button type="button" class="thumb-del" data-img-del="${i}">✕</button>
+      ${selectedColors.length ? `
+        <select class="thumb-color-tag" data-img-color="${i}">
+          <option value="">通用（不分顏色）</option>
+          ${selectedColors.map(c => `<option value="${escAttr(c)}" ${img.color===c?'selected':''}>${escHtml(c)}</option>`).join('')}
+        </select>
+      ` : ''}
+    </div>
+  `).join('');
+  wrap.querySelectorAll('[data-img-del]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      currentImages.splice(Number(b.dataset.imgDel),1);
+      renderImageGallery();
+    });
+  });
+  wrap.querySelectorAll('[data-img-color]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      currentImages[Number(sel.dataset.imgColor)].color = sel.value;
+    });
+  });
+}
+
+document.getElementById('pImageFiles').addEventListener('change', async (e)=>{
+  const files = Array.from(e.target.files || []);
+  if(!files.length) return;
+  const statusEl = document.getElementById('pImageUploadStatus');
+  for(const file of files){
+    statusEl.textContent = `上傳中（${file.name}）...`;
+    statusEl.style.color = 'var(--ink-soft)';
+    try{
+      const url = await uploadProductImage(file);
+      currentImages.push({ url, color:'' });
+      renderImageGallery();
+    }catch(err){
+      statusEl.textContent = '上傳失敗：'+err.message;
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+  }
+  statusEl.textContent = `已上傳，共 ${currentImages.length} 張照片 ✓`;
+  statusEl.style.color = 'var(--sage-deep)';
+  e.target.value = '';
+});
+
+document.getElementById('pVideoFile').addEventListener('change', async (e)=>{
   const file = e.target.files[0];
   if(!file) return;
-  const statusEl = document.getElementById('pImageUploadStatus');
+  const statusEl = document.getElementById('pVideoUploadStatus');
   statusEl.textContent = '上傳中...';
   statusEl.style.color = 'var(--ink-soft)';
   try{
     const url = await uploadProductImage(file);
-    document.getElementById('pImage').value = url;
-    document.getElementById('pImagePreview').src = url;
-    document.getElementById('pImagePreviewWrap').style.display = 'block';
+    currentVideoUrl = url;
+    document.getElementById('pVideoPreview').src = url;
+    document.getElementById('pVideoPreviewWrap').style.display = 'block';
     statusEl.textContent = '上傳完成 ✓';
     statusEl.style.color = 'var(--sage-deep)';
   }catch(err){
     statusEl.textContent = '上傳失敗：'+err.message;
     statusEl.style.color = 'var(--danger)';
   }
+  e.target.value = '';
+});
+
+document.getElementById('removeVideoBtn').addEventListener('click', ()=>{
+  currentVideoUrl = '';
+  document.getElementById('pVideoPreviewWrap').style.display = 'none';
+  document.getElementById('pVideoUploadStatus').textContent = '';
 });
 
 function openProductModal(id){
@@ -1029,9 +1291,11 @@ function openProductModal(id){
   renderCategoryOptions();
   const form = document.getElementById('productForm');
   form.reset();
-  document.getElementById('pImage').value = '';
-  document.getElementById('pImagePreviewWrap').style.display = 'none';
+  currentImages = [];
+  currentVideoUrl = '';
   document.getElementById('pImageUploadStatus').textContent = '';
+  document.getElementById('pVideoPreviewWrap').style.display = 'none';
+  document.getElementById('pVideoUploadStatus').textContent = '';
   const del = document.getElementById('deleteProductBtn');
   if(id){
     const p = state.products.find(x=>x.id===id);
@@ -1040,10 +1304,12 @@ function openProductModal(id){
     document.getElementById('pName').value = p.name;
     document.getElementById('pPrice').value = p.price;
     document.getElementById('pCategory').value = p.category;
-    document.getElementById('pImage').value = p.image;
-    if(p.image){
-      document.getElementById('pImagePreview').src = p.image;
-      document.getElementById('pImagePreviewWrap').style.display = 'block';
+    document.getElementById('pStockQty').value = p.stock_qty != null ? p.stock_qty : '';
+    currentImages = [...galleryOf(p)];
+    if(p.video_url){
+      currentVideoUrl = p.video_url;
+      document.getElementById('pVideoPreview').src = p.video_url;
+      document.getElementById('pVideoPreviewWrap').style.display = 'block';
     }
     document.getElementById('pNote').value = p.note || '';
     document.getElementById('pSoldOut').checked = !!p.sold_out;
@@ -1057,6 +1323,7 @@ function openProductModal(id){
     selectedSizes = [];
     del.style.display = 'none';
   }
+  renderImageGallery();
   renderProductFormChecks();
   showOverlay('productOverlay');
 }
@@ -1065,21 +1332,26 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
   e.preventDefault();
   const errEl = document.getElementById('productErr');
   errEl.classList.remove('show');
-  if(!document.getElementById('pImage').value){
-    errEl.textContent = '請先上傳商品照片';
+  if(currentImages.length === 0){
+    errEl.textContent = '請至少上傳一張商品照片';
     errEl.classList.add('show');
     return;
   }
   const id = document.getElementById('pId').value;
+  const stockVal = document.getElementById('pStockQty').value;
   const data = {
     name: document.getElementById('pName').value.trim(),
     price: Number(document.getElementById('pPrice').value),
     category: document.getElementById('pCategory').value,
-    image: document.getElementById('pImage').value.trim(),
+    image: currentImages[0].url,
+    images: currentImages.map(im => im.url),
+    photo_gallery: currentImages,
+    video_url: currentVideoUrl || null,
     colors: selectedColors,
     sizes: selectedSizes,
     note: document.getElementById('pNote').value.trim(),
-    sold_out: document.getElementById('pSoldOut').checked
+    sold_out: document.getElementById('pSoldOut').checked,
+    stock_qty: stockVal === '' ? null : Math.max(0, Number(stockVal))
   };
   const { error } = id
     ? await sb.from('products').update(data).eq('id', id)
