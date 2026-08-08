@@ -151,6 +151,21 @@
   .chips-input span{background:var(--paper); padding:3px 8px; font-size:11px; border-radius:12px; display:flex; align-items:center; gap:4px;}
   .chips-input span b{cursor:pointer; color:var(--danger); font-weight:700;}
 
+  .checks{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;}
+  .checks label{
+    display:flex; align-items:center; gap:4px; font-size:12px;
+    border:1px solid var(--line); padding:5px 10px; border-radius:14px;
+    cursor:pointer; background:#FCFAF5; user-select:none;
+  }
+  .checks label:has(input:checked){background:var(--sage); border-color:var(--sage); color:#fff;}
+  .checks input{width:auto; margin:0;}
+  .manage-link{font-size:11px; color:var(--sage-deep); text-decoration:underline; cursor:pointer; display:inline-block; margin-top:6px;}
+
+  .btn-quicksoldout{
+    padding:8px 6px; font-size:11px; background:#fff; border:1px solid var(--line); cursor:pointer; white-space:nowrap;
+  }
+  .btn-quicksoldout.is-soldout{background:var(--danger); color:#fff; border-color:var(--danger);}
+
   .orders-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:10px;}
   .orders-table th, .orders-table td{border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top;}
   .orders-table th{background:var(--paper);}
@@ -176,7 +191,7 @@
     .card .price{font-size:14px;}
     .card .pick-row{flex-direction:column;}
     .card .pick-row select, .card .pick-row input{width:100%;}
-    .btn-register, .btn-edit{font-size:11px; padding:9px 6px;}
+    .btn-register, .btn-edit, .btn-quicksoldout{font-size:11px; padding:9px 6px;}
     .cart-fab{right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); padding:12px 16px; font-size:12px;}
     .modal{padding:18px; max-height:92vh; border-radius:8px 8px 0 0;}
     .overlay{align-items:flex-end; padding:0;}
@@ -210,6 +225,7 @@
     <button class="secondary" id="editBrandBtn">編輯店名/標語</button>
     <button class="secondary" id="toggleOrdersBtn">查看訂單登記</button>
     <button class="secondary" id="editCatBtn">編輯分類</button>
+    <button class="secondary" id="editColorSizeBtn">編輯顏色/尺寸清單</button>
     <button class="secondary" id="logoutBtn">登出管理帳號</button>
   </div>
   <div class="row" style="font-size:11px; color:var(--ink-soft);">
@@ -312,9 +328,13 @@
         <input type="hidden" id="pImage" required>
       </div>
       <div class="field">
-        <label>尺寸/顏色選項（輸入後按 Enter 新增，客人下單時可選）</label>
-        <input type="text" id="pVariantInput" placeholder="例如：均碼 / S / M / 黑色 ...">
-        <div class="chips-input" id="pVariantChips"></div>
+        <label>顏色（勾選這件商品有的顏色，可不選）</label>
+        <div class="checks" id="pColorChecks"></div>
+        <span class="manage-link" id="openColorSizeManage1">+ 管理顏色/尺寸清單</span>
+      </div>
+      <div class="field">
+        <label>尺寸（勾選這件商品有的尺寸，可不選）</label>
+        <div class="checks" id="pSizeChecks"></div>
       </div>
       <div class="field">
         <label>備註小標（選填，例如「闆娘大力推薦」）</label>
@@ -339,6 +359,25 @@
       <input type="text" id="catInput" placeholder="例如：上衣 / 洋裝 / 配件">
     </div>
     <div class="chips-input" id="catChips"></div>
+  </div>
+</div>
+
+<!-- 顏色/尺寸清單編輯 modal -->
+<div class="overlay" id="colorSizeOverlay">
+  <div class="modal">
+    <button class="close" data-close="colorSizeOverlay">✕</button>
+    <h3>編輯顏色/尺寸清單</h3>
+    <div class="sub">這裡是全店共用的選項庫，新增商品時直接勾選就好，不用每次手打</div>
+    <div class="field">
+      <label>顏色清單 · 輸入後按 Enter 新增</label>
+      <input type="text" id="colorInput" placeholder="例如：黑色 / 白色 / 卡其">
+      <div class="chips-input" id="colorChips"></div>
+    </div>
+    <div class="field">
+      <label>尺寸清單 · 輸入後按 Enter 新增</label>
+      <input type="text" id="sizeInput" placeholder="例如：S / M / L / 均碼">
+      <div class="chips-input" id="sizeChips"></div>
+    </div>
   </div>
 </div>
 
@@ -384,7 +423,7 @@ document.getElementById('appRoot').style.display = 'block';
 let state = {
   products: [],
   orders: [],
-  settings: { brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', categories:['上衣','下身','洋裝','外套','配件'] },
+  settings: { brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', categories:['上衣','下身','洋裝','外套','配件'], colors:['黑色','白色','米色','卡其'], sizes:['均碼','S','M','L','XL'] },
   cart: JSON.parse(localStorage.getItem('shop_cart_v3') || '[]'),
   adminMode:false,
   activeCategory:'全部'
@@ -446,7 +485,9 @@ function renderGrid(){
     return;
   }
   grid.innerHTML = list.map(p => {
-    const variants = (p.variants && p.variants.length) ? p.variants : ['均碼'];
+    const colors = p.colors || [];
+    const sizes = p.sizes || [];
+    const hasPicks = colors.length > 0 || sizes.length > 0;
     return `
     <div class="card">
       <span class="tag-corner"></span>
@@ -457,14 +498,14 @@ function renderGrid(){
         <div class="name">${escHtml(p.name)}</div>
         <div class="price">NT$ ${Number(p.price).toLocaleString()}</div>
         <div class="pick-row">
-          <select data-variant-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>
-            ${variants.map(v => `<option>${escHtml(v)}</option>`).join('')}
-          </select>
+          ${colors.length ? `<select data-color-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>${colors.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+          ${sizes.length ? `<select data-size-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>${sizes.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
           <input type="number" min="1" value="1" data-qty-of="${p.id}" ${p.sold_out ? 'disabled' : ''}>
         </div>
         <div class="actions">
           <button class="btn-register" ${p.sold_out ? 'disabled' : ''} data-add="${p.id}">${p.sold_out ? '已售完' : '加入清單'}</button>
           ${state.adminMode ? `<button class="btn-edit" data-edit="${p.id}">編輯</button>` : ''}
+          ${state.adminMode ? `<button class="btn-quicksoldout ${p.sold_out?'is-soldout':''}" data-quick-soldout="${p.id}">${p.sold_out ? '補貨' : '標售完'}</button>` : ''}
         </div>
       </div>
     </div>
@@ -476,15 +517,28 @@ function renderGrid(){
   grid.querySelectorAll('[data-edit]').forEach(btn=>{
     btn.addEventListener('click', ()=> openProductModal(btn.dataset.edit));
   });
+  grid.querySelectorAll('[data-quick-soldout]').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const id = btn.dataset.quickSoldout;
+      const p = state.products.find(x=>x.id===id);
+      const { error } = await sb.from('products').update({ sold_out: !p.sold_out }).eq('id', id);
+      if(error){ alert('更新失敗：'+error.message); return; }
+      await loadProducts();
+      renderGrid();
+    });
+  });
 }
 
 /* ---------- cart (stays local to the customer's browser) ---------- */
 function addToCart(productId, btnEl){
   const p = state.products.find(x=>x.id===productId);
   if(!p) return;
-  const variantSel = document.querySelector(`[data-variant-of="${productId}"]`);
+  const colorSel = document.querySelector(`[data-color-of="${productId}"]`);
+  const sizeSel = document.querySelector(`[data-size-of="${productId}"]`);
   const qtyInput = document.querySelector(`[data-qty-of="${productId}"]`);
-  const variant = variantSel ? variantSel.value : '均碼';
+  const color = colorSel ? colorSel.value : '';
+  const size = sizeSel ? sizeSel.value : '';
+  const variant = [color, size].filter(Boolean).join(' / ') || '均碼';
   const qty = Math.max(1, Number(qtyInput ? qtyInput.value : 1) || 1);
 
   const existing = state.cart.find(c => c.productId===productId && c.variant===variant);
@@ -677,27 +731,97 @@ document.getElementById('catInput').addEventListener('keydown', async e=>{
   }
 });
 
-/* ---------- product modal ---------- */
-let currentVariants = [];
+/* ---------- colors / sizes preset list management ---------- */
+document.getElementById('editColorSizeBtn').addEventListener('click', ()=>{
+  renderColorChips(); renderSizeChips();
+  showOverlay('colorSizeOverlay');
+});
+document.getElementById('openColorSizeManage1').addEventListener('click', ()=>{
+  renderColorChips(); renderSizeChips();
+  showOverlay('colorSizeOverlay');
+});
+function renderColorChips(){
+  const wrap = document.getElementById('colorChips');
+  wrap.innerHTML = (state.settings.colors||[]).map((c,i) =>
+    `<span>${escHtml(c)} <b data-color-del="${i}">✕</b></span>`
+  ).join('');
+  wrap.querySelectorAll('[data-color-del]').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      state.settings.colors.splice(Number(b.dataset.colorDel),1);
+      await saveColorsSizesToCloud();
+      renderColorChips(); renderProductFormChecks();
+    });
+  });
+}
+function renderSizeChips(){
+  const wrap = document.getElementById('sizeChips');
+  wrap.innerHTML = (state.settings.sizes||[]).map((s,i) =>
+    `<span>${escHtml(s)} <b data-size-del="${i}">✕</b></span>`
+  ).join('');
+  wrap.querySelectorAll('[data-size-del]').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      state.settings.sizes.splice(Number(b.dataset.sizeDel),1);
+      await saveColorsSizesToCloud();
+      renderSizeChips(); renderProductFormChecks();
+    });
+  });
+}
+async function saveColorsSizesToCloud(){
+  const { error } = await sb.from('settings').update({ colors: state.settings.colors, sizes: state.settings.sizes }).eq('id',1);
+  if(error) setSyncNote('儲存顏色/尺寸清單失敗：'+error.message, true); else setSyncNote('');
+}
+document.getElementById('colorInput').addEventListener('keydown', async e=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const v = e.target.value.trim();
+    if(v && !state.settings.colors.includes(v)){
+      state.settings.colors.push(v);
+      await saveColorsSizesToCloud();
+      renderColorChips(); renderProductFormChecks();
+    }
+    e.target.value = '';
+  }
+});
+document.getElementById('sizeInput').addEventListener('keydown', async e=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const v = e.target.value.trim();
+    if(v && !state.settings.sizes.includes(v)){
+      state.settings.sizes.push(v);
+      await saveColorsSizesToCloud();
+      renderSizeChips(); renderProductFormChecks();
+    }
+    e.target.value = '';
+  }
+});
+
+/* ---------- product modal: color/size checkboxes ---------- */
+let selectedColors = [];
+let selectedSizes = [];
 function renderCategoryOptions(){
   const sel = document.getElementById('pCategory');
   sel.innerHTML = (state.settings.categories||[]).map(c => `<option value="${escAttr(c)}">${escHtml(c)}</option>`).join('');
 }
-function renderVariantChips(){
-  const wrap = document.getElementById('pVariantChips');
-  wrap.innerHTML = currentVariants.map((v,i) => `<span>${escHtml(v)} <b data-vdel="${i}">✕</b></span>`).join('');
-  wrap.querySelectorAll('[data-vdel]').forEach(b=>{
-    b.addEventListener('click', ()=>{ currentVariants.splice(Number(b.dataset.vdel),1); renderVariantChips(); });
+function renderProductFormChecks(){
+  const colorWrap = document.getElementById('pColorChecks');
+  colorWrap.innerHTML = (state.settings.colors||[]).map(c => `
+    <label><input type="checkbox" value="${escAttr(c)}" ${selectedColors.includes(c)?'checked':''} data-color-check>${escHtml(c)}</label>
+  `).join('') || `<span style="font-size:11px; color:var(--ink-soft);">還沒有顏色清單，先去「管理顏色/尺寸清單」新增</span>`;
+  const sizeWrap = document.getElementById('pSizeChecks');
+  sizeWrap.innerHTML = (state.settings.sizes||[]).map(s => `
+    <label><input type="checkbox" value="${escAttr(s)}" ${selectedSizes.includes(s)?'checked':''} data-size-check>${escHtml(s)}</label>
+  `).join('') || `<span style="font-size:11px; color:var(--ink-soft);">還沒有尺寸清單，先去「管理顏色/尺寸清單」新增</span>`;
+  colorWrap.querySelectorAll('[data-color-check]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      selectedColors = [...colorWrap.querySelectorAll('[data-color-check]:checked')].map(x=>x.value);
+    });
+  });
+  sizeWrap.querySelectorAll('[data-size-check]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      selectedSizes = [...sizeWrap.querySelectorAll('[data-size-check]:checked')].map(x=>x.value);
+    });
   });
 }
-document.getElementById('pVariantInput').addEventListener('keydown', e=>{
-  if(e.key === 'Enter'){
-    e.preventDefault();
-    const v = e.target.value.trim();
-    if(v){ currentVariants.push(v); renderVariantChips(); }
-    e.target.value = '';
-  }
-});
 
 document.getElementById('addProductBtn').addEventListener('click', ()=> openProductModal(null));
 
@@ -753,15 +877,17 @@ function openProductModal(id){
     }
     document.getElementById('pNote').value = p.note || '';
     document.getElementById('pSoldOut').checked = !!p.sold_out;
-    currentVariants = [...(p.variants||[])];
+    selectedColors = [...(p.colors||[])];
+    selectedSizes = [...(p.sizes||[])];
     del.style.display = 'block';
   } else {
     document.getElementById('productModalTitle').textContent = '新增商品';
     document.getElementById('pId').value = '';
-    currentVariants = [];
+    selectedColors = [];
+    selectedSizes = [];
     del.style.display = 'none';
   }
-  renderVariantChips();
+  renderProductFormChecks();
   showOverlay('productOverlay');
 }
 
@@ -780,7 +906,8 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
     price: Number(document.getElementById('pPrice').value),
     category: document.getElementById('pCategory').value,
     image: document.getElementById('pImage').value.trim(),
-    variants: currentVariants,
+    colors: selectedColors,
+    sizes: selectedSizes,
     note: document.getElementById('pNote').value.trim(),
     sold_out: document.getElementById('pSoldOut').checked
   };
