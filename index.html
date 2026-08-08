@@ -212,23 +212,36 @@
   .config-warning code{background:var(--paper); padding:2px 6px; border-radius:3px;}
 
   @media (max-width: 480px){
-    header{padding:44px 16px 20px;}
-    .brand-name{font-size:21px; letter-spacing:1px;}
-    .admin-toggle{top:12px; right:12px; font-size:10px; padding:5px 9px;}
-    .grid{grid-template-columns:repeat(2, 1fr); gap:12px; margin:18px auto 96px;}
-    .card .info{padding:10px 10px 12px;}
-    .card .name{font-size:12.5px;}
-    .card .price{font-size:14px;}
-    .card .pick-row{flex-direction:column;}
-    .card .pick-row select, .card .pick-row input{width:100%;}
-    .btn-register, .btn-edit, .btn-quicksoldout{font-size:11px; padding:9px 6px;}
-    .cart-fab{right:12px; bottom:calc(12px + env(safe-area-inset-bottom)); padding:12px 16px; font-size:12px;}
-    .modal{padding:18px; max-height:92vh; border-radius:8px 8px 0 0;}
+    header{padding:36px 16px 16px;}
+    .brand-name{font-size:19px; letter-spacing:1px;}
+    .brand-tag{font-size:10.5px; letter-spacing:2px;}
+    .admin-toggle{top:10px; right:10px; font-size:10px; padding:5px 9px;}
+    .filters{padding:12px 12px 2px;}
+    .chip{padding:5px 11px; font-size:11px;}
+    .grid{grid-template-columns:repeat(2, 1fr); gap:10px; margin:14px auto 90px; padding:0 12px;}
+    .card .info{padding:8px 8px 10px; gap:4px;}
+    .card .name{font-size:12px; line-height:1.35;}
+    .card .price{font-size:13.5px;}
+    .card .note{font-size:9.5px;}
+    .stock-badge{font-size:9px;}
+    .card .pick-row{flex-direction:column; gap:4px; margin-top:0;}
+    .card .pick-row select, .card .pick-row input{width:100%; font-size:16px; padding:5px 6px;}
+    .btn-register, .btn-edit, .btn-quicksoldout, .btn-restock{font-size:10.5px; padding:7px 5px;}
+    .actions{gap:4px;}
+    .cart-fab{right:10px; bottom:calc(10px + env(safe-area-inset-bottom)); padding:11px 15px; font-size:11px;}
+    .modal{padding:16px; max-height:90vh; border-radius:8px 8px 0 0;}
     .overlay{align-items:flex-end; padding:0;}
     .overlay .modal{max-width:100%; margin:0;}
-    .admin-bar .row{flex-direction:column;}
-    .admin-bar button{width:100%;}
-    .orders-table{font-size:11px;}
+    .modal h3{font-size:16px;}
+    .field{margin-bottom:9px;}
+    .field label{font-size:11px; margin-bottom:3px;}
+    .field input, .field select, .field textarea{font-size:16px; padding:8px 9px;}
+    .submit-btn{padding:11px; font-size:14px;}
+    .admin-bar{padding:10px 12px;}
+    .admin-bar .row{flex-direction:column; gap:6px; margin-bottom:6px;}
+    .admin-bar button{width:100%; font-size:11px; padding:8px 10px;}
+    .orders-table{font-size:10.5px;}
+    .checks label{font-size:11px; padding:4px 8px;}
   }
 </style>
 </head>
@@ -943,6 +956,7 @@ async function enterAdminMode(){
   document.getElementById('adminToggleBtn').classList.add('active');
   document.getElementById('adminToggleBtn').textContent = '管理中';
   document.getElementById('adminBar').classList.add('show');
+  document.getElementById('cartFab').style.display = 'none';
   renderGrid();
 }
 function exitAdminMode(){
@@ -951,6 +965,7 @@ function exitAdminMode(){
   document.getElementById('adminToggleBtn').textContent = '管理模式';
   document.getElementById('adminBar').classList.remove('show');
   document.getElementById('ordersPanel').classList.remove('show');
+  document.getElementById('cartFab').style.display = '';
   renderGrid();
 }
 
