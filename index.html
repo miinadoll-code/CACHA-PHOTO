@@ -226,6 +226,7 @@
     <button class="secondary" id="toggleOrdersBtn">查看訂單登記</button>
     <button class="secondary" id="editCatBtn">編輯分類</button>
     <button class="secondary" id="editColorSizeBtn">編輯顏色/尺寸清單</button>
+    <button class="secondary" id="editOrderFormBtn">編輯訂單表單</button>
     <button class="secondary" id="logoutBtn">登出管理帳號</button>
   </div>
   <div class="row" style="font-size:11px; color:var(--ink-soft);">
@@ -271,6 +272,7 @@
       <div id="cartItems"></div>
       <div class="cart-total"><span>預估總額</span><span id="cartTotal">NT$ 0</span></div>
       <div class="form-err" id="cartErr"></div>
+      <div id="orderFormMessage" style="display:none; font-size:13px; background:var(--paper); padding:10px 12px; border-radius:var(--radius); margin-bottom:14px; white-space:pre-line;"></div>
       <form id="cartForm">
         <div class="field">
           <label>姓名 *</label>
@@ -280,6 +282,7 @@
           <label>聯絡電話 *</label>
           <input type="tel" id="ordPhone" required>
         </div>
+        <div id="customFieldsWrap"></div>
         <div class="field">
           <label>備註（選填）</label>
           <textarea id="ordNote" placeholder="例如：取貨方式、其他需求"></textarea>
@@ -381,6 +384,52 @@
   </div>
 </div>
 
+<!-- 訂單表單編輯 modal -->
+<div class="overlay" id="orderFormOverlay">
+  <div class="modal">
+    <button class="close" data-close="orderFormOverlay">✕</button>
+    <h3>編輯訂單表單</h3>
+    <div class="sub">寫給顧客的話會顯示在填寫資料的最上方；也可以自己新增欄位，例如取貨門市、地址</div>
+
+    <div class="field">
+      <label>給顧客的話（選填，留空則不顯示）</label>
+      <textarea id="orderMsgInput" placeholder="例如：訂購後將由專人與您確認出貨時間，謝謝您的支持 🌿"></textarea>
+      <button type="button" class="submit-btn" id="saveOrderMsgBtn" style="margin-top:8px;">儲存這段話</button>
+    </div>
+
+    <div class="field" style="border-top:1px solid var(--line); padding-top:16px;">
+      <label>目前的自訂欄位</label>
+      <div id="customFieldsList" style="display:flex; flex-direction:column; gap:6px; margin-top:6px;"></div>
+    </div>
+
+    <div class="field" style="border-top:1px solid var(--line); padding-top:16px;">
+      <label>新增欄位</label>
+      <div class="field-row">
+        <div class="field">
+          <label>欄位名稱</label>
+          <input type="text" id="newFieldLabel" placeholder="例如：取貨門市">
+        </div>
+        <div class="field">
+          <label>欄位型態</label>
+          <select id="newFieldType">
+            <option value="text">文字輸入</option>
+            <option value="select">下拉選單</option>
+          </select>
+        </div>
+      </div>
+      <div class="field" id="newFieldOptionsWrap" style="display:none;">
+        <label>下拉選項（輸入後按 Enter 新增）</label>
+        <input type="text" id="newFieldOptionInput" placeholder="例如：台北信義店">
+        <div class="chips-input" id="newFieldOptionChips"></div>
+      </div>
+      <div class="field">
+        <label><input type="checkbox" id="newFieldRequired" style="width:auto; margin-right:6px;">客人必填</label>
+      </div>
+      <button type="button" class="submit-btn" id="addCustomFieldBtn">+ 新增這個欄位</button>
+    </div>
+  </div>
+</div>
+
 </div><!-- /appRoot -->
 
 <!-- 管理者登入 modal -->
@@ -423,7 +472,7 @@ document.getElementById('appRoot').style.display = 'block';
 let state = {
   products: [],
   orders: [],
-  settings: { brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', categories:['上衣','下身','洋裝','外套','配件'], colors:['黑色','白色','米色','卡其'], sizes:['均碼','S','M','L','XL'] },
+  settings: { brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', categories:['上衣','下身','洋裝','外套','配件'], colors:['黑色','白色','米色','卡其'], sizes:['均碼','S','M','L','XL'], order_form_message:'', custom_fields:[] },
   cart: JSON.parse(localStorage.getItem('shop_cart_v3') || '[]'),
   adminMode:false,
   activeCategory:'全部'
@@ -592,8 +641,38 @@ document.getElementById('cartFab').addEventListener('click', ()=>{
   document.getElementById('cartConfirmWrap').style.display = 'none';
   document.getElementById('cartErr').classList.remove('show');
   renderCart();
+  renderOrderFormMessage();
+  renderCustomFieldsInForm();
   showOverlay('cartOverlay');
 });
+
+function renderOrderFormMessage(){
+  const el = document.getElementById('orderFormMessage');
+  const msg = (state.settings.order_form_message || '').trim();
+  if(msg){ el.textContent = msg; el.style.display = 'block'; }
+  else { el.style.display = 'none'; }
+}
+
+function renderCustomFieldsInForm(){
+  const wrap = document.getElementById('customFieldsWrap');
+  const fields = state.settings.custom_fields || [];
+  wrap.innerHTML = fields.map(f => {
+    if(f.type === 'select'){
+      return `
+        <div class="field">
+          <label>${escHtml(f.label)}${f.required ? ' *' : ''}</label>
+          <select data-custom-field="${f.id}" ${f.required ? 'required' : ''}>
+            ${(f.options||[]).map(o => `<option>${escHtml(o)}</option>`).join('')}
+          </select>
+        </div>`;
+    }
+    return `
+      <div class="field">
+        <label>${escHtml(f.label)}${f.required ? ' *' : ''}</label>
+        <input type="text" data-custom-field="${f.id}" ${f.required ? 'required' : ''}>
+      </div>`;
+  }).join('');
+}
 
 document.getElementById('cartForm').addEventListener('submit', async e=>{
   e.preventDefault();
@@ -607,7 +686,12 @@ document.getElementById('cartForm').addEventListener('submit', async e=>{
     customer_name: document.getElementById('ordName').value.trim(),
     phone: document.getElementById('ordPhone').value.trim(),
     note: document.getElementById('ordNote').value.trim(),
-    items: state.cart.map(c => ({ productName:c.name, variant:c.variant, qty:c.qty, price:c.price }))
+    items: state.cart.map(c => ({ productName:c.name, variant:c.variant, qty:c.qty, price:c.price })),
+    custom_data: (state.settings.custom_fields || []).reduce((acc, f) => {
+      const el = document.querySelector(`[data-custom-field="${f.id}"]`);
+      acc[f.label] = el ? el.value.trim() : '';
+      return acc;
+    }, {})
   };
   const { error } = await sb.from('orders').insert(order);
   btn.disabled = false; btn.textContent = '送出登記';
@@ -795,6 +879,92 @@ document.getElementById('sizeInput').addEventListener('keydown', async e=>{
   }
 });
 
+/* ---------- order form editor (message + custom fields) ---------- */
+let newFieldOptions = [];
+document.getElementById('editOrderFormBtn').addEventListener('click', ()=>{
+  document.getElementById('orderMsgInput').value = state.settings.order_form_message || '';
+  renderCustomFieldsList();
+  resetNewFieldForm();
+  showOverlay('orderFormOverlay');
+});
+
+document.getElementById('saveOrderMsgBtn').addEventListener('click', async ()=>{
+  const msg = document.getElementById('orderMsgInput').value.trim();
+  const { error } = await sb.from('settings').update({ order_form_message: msg }).eq('id',1);
+  if(error){ alert('儲存失敗：'+error.message); return; }
+  state.settings.order_form_message = msg;
+  alert('已儲存');
+});
+
+function renderCustomFieldsList(){
+  const wrap = document.getElementById('customFieldsList');
+  const fields = state.settings.custom_fields || [];
+  if(fields.length === 0){
+    wrap.innerHTML = `<span style="font-size:12px; color:var(--ink-soft);">目前還沒有自訂欄位</span>`;
+    return;
+  }
+  wrap.innerHTML = fields.map(f => `
+    <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid var(--line); padding:8px 10px; font-size:12px;">
+      <span>${escHtml(f.label)}　<span style="color:var(--ink-soft);">${f.type==='select' ? '下拉選單：'+(f.options||[]).join('、') : '文字輸入'}${f.required ? '・必填' : '・選填'}</span></span>
+      <button type="button" data-field-del="${f.id}" style="border:none;background:none;color:var(--danger);cursor:pointer;">刪除</button>
+    </div>
+  `).join('');
+  wrap.querySelectorAll('[data-field-del]').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      state.settings.custom_fields = state.settings.custom_fields.filter(f=>f.id!==b.dataset.fieldDel);
+      await saveCustomFieldsToCloud();
+      renderCustomFieldsList();
+    });
+  });
+}
+
+function resetNewFieldForm(){
+  document.getElementById('newFieldLabel').value = '';
+  document.getElementById('newFieldType').value = 'text';
+  document.getElementById('newFieldRequired').checked = false;
+  document.getElementById('newFieldOptionsWrap').style.display = 'none';
+  newFieldOptions = [];
+  renderNewFieldOptionChips();
+}
+
+document.getElementById('newFieldType').addEventListener('change', (e)=>{
+  document.getElementById('newFieldOptionsWrap').style.display = e.target.value === 'select' ? 'block' : 'none';
+});
+
+function renderNewFieldOptionChips(){
+  const wrap = document.getElementById('newFieldOptionChips');
+  wrap.innerHTML = newFieldOptions.map((o,i) => `<span>${escHtml(o)} <b data-newopt-del="${i}">✕</b></span>`).join('');
+  wrap.querySelectorAll('[data-newopt-del]').forEach(b=>{
+    b.addEventListener('click', ()=>{ newFieldOptions.splice(Number(b.dataset.newoptDel),1); renderNewFieldOptionChips(); });
+  });
+}
+document.getElementById('newFieldOptionInput').addEventListener('keydown', e=>{
+  if(e.key === 'Enter'){
+    e.preventDefault();
+    const v = e.target.value.trim();
+    if(v){ newFieldOptions.push(v); renderNewFieldOptionChips(); }
+    e.target.value = '';
+  }
+});
+
+async function saveCustomFieldsToCloud(){
+  const { error } = await sb.from('settings').update({ custom_fields: state.settings.custom_fields }).eq('id',1);
+  if(error) alert('儲存欄位失敗：'+error.message);
+}
+
+document.getElementById('addCustomFieldBtn').addEventListener('click', async ()=>{
+  const label = document.getElementById('newFieldLabel').value.trim();
+  const type = document.getElementById('newFieldType').value;
+  const required = document.getElementById('newFieldRequired').checked;
+  if(!label){ alert('請輸入欄位名稱'); return; }
+  if(type === 'select' && newFieldOptions.length === 0){ alert('下拉選單請至少新增一個選項'); return; }
+  const field = { id: cryptoId(), label, type, required, options: type==='select' ? [...newFieldOptions] : [] };
+  state.settings.custom_fields = [...(state.settings.custom_fields||[]), field];
+  await saveCustomFieldsToCloud();
+  renderCustomFieldsList();
+  resetNewFieldForm();
+});
+
 /* ---------- product modal: color/size checkboxes ---------- */
 let selectedColors = [];
 let selectedSizes = [];
@@ -943,6 +1113,11 @@ function orderTotal(order){
   return order.items.reduce((s,it)=>s+it.price*it.qty,0);
 }
 
+function customDataSummary(order){
+  const cd = order.custom_data || {};
+  return Object.entries(cd).filter(([k,v])=>v).map(([k,v])=>`${k}：${v}`).join('\n');
+}
+
 function renderOrders(){
   document.getElementById('orderCount').textContent = state.orders.length;
   document.getElementById('ordersBody').innerHTML = state.orders.map(o => `
@@ -951,7 +1126,7 @@ function renderOrders(){
       <td>${escHtml(o.customer_name)}</td>
       <td>${escHtml(o.phone)}</td>
       <td style="white-space:pre-line;">${escHtml(itemsSummary(o))}<br><b>小計 NT$ ${orderTotal(o).toLocaleString()}</b></td>
-      <td>${escHtml(o.note||'')}</td>
+      <td style="white-space:pre-line;">${escHtml(o.note||'')}${customDataSummary(o) ? (o.note ? '\n' : '')+escHtml(customDataSummary(o)) : ''}</td>
       <td><button data-odel="${o.id}" style="border:none;background:none;color:var(--danger);cursor:pointer;">刪除</button></td>
     </tr>
   `).join('') || `<tr><td colspan="6" style="text-align:center;color:var(--ink-soft);">目前還沒有訂單登記</td></tr>`;
@@ -976,11 +1151,11 @@ document.getElementById('clearOrdersBtn').addEventListener('click', async ()=>{
 });
 
 document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
-  const header = ['時間','姓名','電話','商品清單','小計','備註'];
+  const header = ['時間','姓名','電話','商品清單','小計','備註','其他資訊'];
   const rows = state.orders.map(o => [
     new Date(o.created_at).toLocaleString('zh-TW'), o.customer_name, o.phone,
     o.items.map(it=>`${it.productName}(${it.variant})x${it.qty}`).join('; '),
-    orderTotal(o), o.note
+    orderTotal(o), o.note, customDataSummary(o).replace(/\n/g,'; ')
   ]);
   const csv = [header, ...rows].map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
   const blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
@@ -992,7 +1167,7 @@ document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
 
 document.getElementById('exportLineBtn').addEventListener('click', ()=>{
   const text = state.orders.map(o =>
-    `姓名：${o.customer_name}\n電話：${o.phone}\n${o.items.map(it=>`・${it.productName}｜${it.variant} x${it.qty}`).join('\n')}\n小計：NT$ ${orderTotal(o).toLocaleString()}${o.note ? '\n備註：'+o.note : ''}`
+    `姓名：${o.customer_name}\n電話：${o.phone}\n${o.items.map(it=>`・${it.productName}｜${it.variant} x${it.qty}`).join('\n')}\n小計：NT$ ${orderTotal(o).toLocaleString()}${o.note ? '\n備註：'+o.note : ''}${customDataSummary(o) ? '\n'+customDataSummary(o) : ''}`
   ).join('\n\n----\n\n');
   navigator.clipboard.writeText(text || '目前沒有訂單').then(()=>{
     alert('已複製到剪貼簿，可直接貼到 LINE');
