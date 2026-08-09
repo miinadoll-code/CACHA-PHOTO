@@ -95,8 +95,10 @@
   .card .name{font-size:14px; font-weight:500; line-height:1.5;}
   .card .price{font-size:15px; font-weight:700; font-family:'Noto Serif TC',serif;}
   .card .pick-row{display:flex; gap:6px; margin-top:4px;}
-  .card .pick-row select{flex:1.4; font-size:14px; padding:9px 7px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5; font-weight:500;}
-  .card .pick-row input{width:56px; font-size:14px; padding:9px 6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
+  .pick-row select{flex:1.4; font-size:14px; padding:9px 7px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5; font-weight:500;}
+  .pick-row input{width:56px; font-size:14px; padding:9px 6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
+  #galleryPickRow{display:flex; gap:8px;}
+  #galleryPickRow select{flex:1.4; min-width:0;}
   .card .actions{margin-top:auto; display:flex; gap:6px; padding-top:8px; flex-wrap:wrap;}
   .btn-register{flex:1; padding:8px 10px; font-size:12px; letter-spacing:1px; background:var(--ink); color:#fff; border:none; cursor:pointer; border-radius:var(--radius);}
   .btn-register:hover{background:var(--sage-deep);}
@@ -105,9 +107,16 @@
   .btn-edit{padding:8px 10px; font-size:12px; background:#fff; border:1px solid var(--line); cursor:pointer;}
   .soldout-badge{position:absolute; top:10px; right:10px; background:var(--danger); color:#fff; font-size:10px; padding:3px 8px; letter-spacing:1px; z-index:2;}
   .drag-handle{
-    position:absolute; top:8px; left:8px; z-index:3; width:38px; height:38px; border-radius:50%;
-    background:rgba(51,47,40,0.8); color:#fff; display:flex; align-items:center; justify-content:center;
-    font-size:15px; letter-spacing:-1px; cursor:grab; touch-action:none;
+    position:absolute; top:8px; left:8px; z-index:3; width:26px; height:26px; border-radius:50%;
+    background:rgba(51,47,40,0.42); display:flex; align-items:center; justify-content:center;
+    cursor:grab; touch-action:none;
+  }
+  .drag-handle::before{
+    content:""; width:3px; height:3px; border-radius:50%; background:rgba(255,255,255,0.9);
+    box-shadow:
+      -6px -5px 0 rgba(255,255,255,0.9), 0 -5px 0 rgba(255,255,255,0.9), 6px -5px 0 rgba(255,255,255,0.9),
+      -6px 0 0 rgba(255,255,255,0.9), 6px 0 0 rgba(255,255,255,0.9),
+      -6px 5px 0 rgba(255,255,255,0.9), 0 5px 0 rgba(255,255,255,0.9), 6px 5px 0 rgba(255,255,255,0.9);
   }
   .card.sortable-ghost{opacity:0.4;}
   .card.sortable-chosen{box-shadow:0 4px 14px rgba(0,0,0,0.25);}
@@ -229,7 +238,7 @@
     .card .note{font-size:9.5px;}
     .stock-badge{font-size:9px;}
     .card .pick-row{flex-direction:column; gap:4px; margin-top:0;}
-    .card .pick-row select, .card .pick-row input{width:100%; font-size:16px; padding:5px 6px;}
+    .pick-row select, .pick-row input{width:100%; font-size:16px; padding:5px 6px;}
     .btn-register, .btn-edit, .btn-quicksoldout, .btn-restock{font-size:10.5px; padding:7px 5px;}
     .actions{gap:4px;}
     .cart-fab{right:10px; bottom:calc(10px + env(safe-area-inset-bottom)); padding:11px 15px; font-size:11px;}
@@ -245,7 +254,7 @@
     .variant-add-row select, .variant-add-row input{font-size:16px;}
     .announcement{font-size:10.5px; padding:5px 10px; max-width:90vw; overflow-wrap:break-word;}
     .checks label{font-size:11px; padding:4px 8px;}
-    .drag-handle{width:34px; height:34px; font-size:13px;}
+    .drag-handle{width:24px; height:24px;}
   }
 </style>
 </head>
@@ -665,7 +674,7 @@ function renderGrid(){
     const stockLabel = hasVariants(p) ? ('規格庫存合計 '+totalStock(p)+' 件') : (p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存');
     return `
     <div class="card" data-product-id="${p.id}">
-      ${state.adminMode && state.activeCategory==='全部' ? '<div class="drag-handle" title="長按拖曳排序">⠿⠿</div>' : ''}
+      ${state.adminMode && state.activeCategory==='全部' ? '<div class="drag-handle" title="長按拖曳排序"></div>' : ''}
       ${soldOut ? '<span class="soldout-badge">已售完</span>' : ''}
       <div class="img-wrap" data-open-gallery="${p.id}">
         <img src="${escAttr(coverImage(p, colors[0]))}" alt="${escAttr(p.name)}" loading="lazy" draggable="false" oncontextmenu="return false" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
@@ -681,7 +690,7 @@ function renderGrid(){
           ${state.adminMode ? '' : `<button class="btn-register" ${soldOut ? 'disabled' : ''} data-add="${p.id}">${soldOut ? '已售完' : '加入清單'}</button>`}
           ${state.adminMode ? `<button class="btn-edit" data-edit="${p.id}">編輯</button>` : ''}
           ${state.adminMode ? `<button class="btn-quicksoldout ${p.sold_out?'is-soldout':''}" data-quick-soldout="${p.id}">${p.sold_out ? '取消標記' : '標售完'}</button>` : ''}
-          ${state.adminMode && (hasVariants(p) || p.stock_qty!=null) ? `<button class="btn-restock" data-restock="${p.id}">+ 進貨</button>` : ''}
+          ${state.adminMode ? `<button class="btn-restock" data-restock="${p.id}">+ 進貨</button>` : ''}
         </div>
       </div>
     </div>
