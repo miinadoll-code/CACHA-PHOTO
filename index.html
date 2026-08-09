@@ -261,6 +261,7 @@
 <div class="grid" id="grid"></div>
 
 <button class="cart-fab" id="cartFab">🛍️ 我的清單 <span class="badge" id="cartBadge">0</span></button>
+<button class="cart-fab" id="addProductFab" style="display:none;">+ 新增商品</button>
 
 <div class="orders-panel" id="ordersPanel">
   <div class="orders-panel-inner">
@@ -943,6 +944,7 @@ async function enterAdminMode(){
   document.getElementById('sidebarAdmin').style.display = 'block';
   document.getElementById('sidebarLogin').style.display = 'none';
   document.getElementById('cartFab').style.display = 'none';
+  document.getElementById('addProductFab').style.display = 'flex';
   renderGrid();
 }
 function exitAdminMode(){
@@ -952,10 +954,12 @@ function exitAdminMode(){
   document.getElementById('sidebarLogin').style.display = 'block';
   document.getElementById('ordersPanel').classList.remove('show');
   document.getElementById('cartFab').style.display = '';
+  document.getElementById('addProductFab').style.display = 'none';
   renderGrid();
 }
 
 document.getElementById('sbAddProduct').addEventListener('click', ()=>{ closeSidebar(); openProductModal(null); });
+document.getElementById('addProductFab').addEventListener('click', ()=> openProductModal(null));
 document.getElementById('sbOrders').addEventListener('click', async ()=>{
   closeSidebar();
   document.getElementById('ordersPanel').classList.add('show');
