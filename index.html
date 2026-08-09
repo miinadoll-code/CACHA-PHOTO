@@ -536,8 +536,9 @@ async function loadSettings(){
   state.settings = data;
 }
 async function loadProducts(){
-  const { data, error } = await sb.from('products').select('*').order('sort_order', {ascending:true}).order('created_at', {ascending:true});
+  const { data, error } = await sb.from('products').select('*').order('created_at', {ascending:true});
   if(error){ setSyncNote('讀取商品失敗：'+error.message, true); return; }
+  data.sort((a,b) => (a.sort_order||0) - (b.sort_order||0));
   state.products = data;
 }
 async function loadOrders(){
