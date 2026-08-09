@@ -455,7 +455,7 @@
 </div>
 
 <script>
-const SUPABASE_URL = ' https://lvazkqgnzdlolqbqooci.supabase.co';
+const SUPABASE_URL = 'https://lvazkqgnzdlolqbqooci.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2YXprcWduemRsb2xxYnFvb2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMDc3MDksImV4cCI6MjEwMTc4MzcwOX0.F2HQlujLQJKOJPANUjuKzRFhTNHo1lQu2gsSBSUqXNM';
 
 if(SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'){
@@ -1289,22 +1289,35 @@ function renderVariantList(){
     b.addEventListener('click', ()=>{ currentVariants.splice(Number(b.dataset.variantDel),1); renderVariantList(); renderImageGallery(); });
   });
 }
+let variantJustAutoCommitted = false;
+function commitPendingVariant(){
+  const vColorEl = document.getElementById('vColor');
+  const vSizeEl = document.getElementById('vSize');
+  const vStockEl = document.getElementById('vStock');
+  if(!vColorEl || !vSizeEl || !vStockEl) return false;
+  const stockRaw = vStockEl.value;
+  if(stockRaw === '' || Number(stockRaw) <= 0) return false;
+  const color = vColorEl.value;
+  const size = vSizeEl.value;
+  const stock = Math.max(0, Number(stockRaw)||0);
+  const existing = currentVariants.find(v=>v.color===color && v.size===size);
+  if(existing){ existing.stock = stock; }
+  else { currentVariants.push({ id: cryptoId(), color, size, stock }); }
+  vStockEl.value = '';
+  renderVariantList(); renderImageGallery();
+  return true;
+}
+document.getElementById('vStock').addEventListener('blur', ()=>{
+  if(commitPendingVariant()) variantJustAutoCommitted = true;
+});
 document.getElementById('addVariantBtn').addEventListener('click', ()=>{
-  const color = document.getElementById('vColor').value;
-  const size = document.getElementById('vSize').value;
+  if(variantJustAutoCommitted){ variantJustAutoCommitted = false; return; }
   const stockRaw = document.getElementById('vStock').value;
   if(stockRaw === '' || Number(stockRaw) <= 0){
     alert('請先填寫庫存數量（大於 0 的數字），才能新增這筆規格');
     return;
   }
-  const stock = Math.max(0, Number(stockRaw)||0);
-  if(currentVariants.some(v=>v.color===color && v.size===size)){
-    alert('這個顏色/尺寸組合已經存在了，請直接在下面列表調整數量');
-    return;
-  }
-  currentVariants.push({ id: cryptoId(), color, size, stock });
-  document.getElementById('vStock').value = '';
-  renderVariantList(); renderImageGallery();
+  commitPendingVariant();
 });
 
 function openProductModal(id){
@@ -1361,18 +1374,8 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
     errEl.classList.add('show');
     return;
   }
-  // 防呆：如果庫存數量欄位有填，但忘記按「+ 新增規格」，儲存時自動補上這一筆
-  const pendingStockVal = document.getElementById('vStock').value;
-  if(pendingStockVal !== '' && Number(pendingStockVal) > 0){
-    const pendingColor = document.getElementById('vColor').value;
-    const pendingSize = document.getElementById('vSize').value;
-    const pendingStock = Math.max(0, Number(pendingStockVal)||0);
-    if(!currentVariants.some(v=>v.color===pendingColor && v.size===pendingSize)){
-      currentVariants.push({ id: cryptoId(), color:pendingColor, size:pendingSize, stock:pendingStock });
-      document.getElementById('vStock').value = '';
-      renderVariantList();
-    }
-  }
+  // 防呆：如果庫存數量欄位還有未提交的值，儲存時自動補上這一筆
+  commitPendingVariant();
   const id = document.getElementById('pId').value;
   const colors = [...new Set(currentVariants.map(v=>v.color).filter(Boolean))];
   const sizes = [...new Set(currentVariants.map(v=>v.size).filter(Boolean))];
