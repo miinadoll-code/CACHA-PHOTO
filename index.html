@@ -77,7 +77,6 @@
 
   .grid{max-width:1100px; margin:26px auto 100px; padding:0 16px; display:grid; gap:22px; grid-template-columns:repeat(auto-fill, minmax(210px,1fr));}
   .card{background:var(--card); border:1px solid var(--line); position:relative; display:flex; flex-direction:column;}
-  .tag-corner{position:absolute; top:-1px; left:14px; width:16px; height:22px; background:var(--sage); clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%); z-index:2;}
   .card img{width:100%; aspect-ratio:3/4; object-fit:cover; display:block; border-bottom:1px solid var(--line); background:#e4dfd3;}
   .card .info{padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1;}
   .card .note{font-size:11px; color:var(--clay); letter-spacing:1px;}
@@ -454,7 +453,7 @@
 </div>
 
 <script>
-const SUPABASE_URL = 'https://lvazkqgnzdlolqbqooci.supabase.co';
+const SUPABASE_URL = ' https://lvazkqgnzdlolqbqooci.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2YXprcWduemRsb2xxYnFvb2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMDc3MDksImV4cCI6MjEwMTc4MzcwOX0.F2HQlujLQJKOJPANUjuKzRFhTNHo1lQu2gsSBSUqXNM';
 
 if(SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'){
@@ -611,7 +610,6 @@ function renderGrid(){
     const stockLabel = hasVariants(p) ? ('規格庫存合計 '+totalStock(p)+' 件') : (p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存');
     return `
     <div class="card">
-      <span class="tag-corner"></span>
       ${soldOut ? '<span class="soldout-badge">已售完</span>' : ''}
       <div class="img-wrap" data-open-gallery="${p.id}">
         <img src="${escAttr(coverImage(p, colors[0]))}" alt="${escAttr(p.name)}" loading="lazy" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
@@ -1292,7 +1290,12 @@ function renderVariantList(){
 document.getElementById('addVariantBtn').addEventListener('click', ()=>{
   const color = document.getElementById('vColor').value;
   const size = document.getElementById('vSize').value;
-  const stock = Math.max(0, Number(document.getElementById('vStock').value)||0);
+  const stockRaw = document.getElementById('vStock').value;
+  if(stockRaw === '' || Number(stockRaw) <= 0){
+    alert('請先填寫庫存數量（大於 0 的數字），才能新增這筆規格');
+    return;
+  }
+  const stock = Math.max(0, Number(stockRaw)||0);
   if(currentVariants.some(v=>v.color===color && v.size===size)){
     alert('這個顏色/尺寸組合已經存在了，請直接在下面列表調整數量');
     return;
@@ -1358,7 +1361,7 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
   }
   // 防呆：如果庫存數量欄位有填，但忘記按「+ 新增規格」，儲存時自動補上這一筆
   const pendingStockVal = document.getElementById('vStock').value;
-  if(pendingStockVal !== ''){
+  if(pendingStockVal !== '' && Number(pendingStockVal) > 0){
     const pendingColor = document.getElementById('vColor').value;
     const pendingSize = document.getElementById('vSize').value;
     const pendingStock = Math.max(0, Number(pendingStockVal)||0);
