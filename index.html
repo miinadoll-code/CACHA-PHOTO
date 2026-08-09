@@ -1352,6 +1352,18 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
     errEl.classList.add('show');
     return;
   }
+  // 防呆：如果庫存數量欄位有填，但忘記按「+ 新增規格」，儲存時自動補上這一筆
+  const pendingStockVal = document.getElementById('vStock').value;
+  if(pendingStockVal !== ''){
+    const pendingColor = document.getElementById('vColor').value;
+    const pendingSize = document.getElementById('vSize').value;
+    const pendingStock = Math.max(0, Number(pendingStockVal)||0);
+    if(!currentVariants.some(v=>v.color===pendingColor && v.size===pendingSize)){
+      currentVariants.push({ id: cryptoId(), color:pendingColor, size:pendingSize, stock:pendingStock });
+      document.getElementById('vStock').value = '';
+      renderVariantList();
+    }
+  }
   const id = document.getElementById('pId').value;
   const colors = [...new Set(currentVariants.map(v=>v.color).filter(Boolean))];
   const sizes = [...new Set(currentVariants.map(v=>v.size).filter(Boolean))];
