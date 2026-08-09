@@ -32,52 +32,52 @@
   }
   h1,h2,h3,.serif{font-family:'Noto Serif TC', serif;}
 
-  header{padding:36px 20px 24px; text-align:center; border-bottom:1px solid var(--line); position:relative;}
-  .brand-name{font-size:26px; font-weight:700; letter-spacing:2px; margin:0 0 4px;}
-  .brand-name[contenteditable]:focus{outline:1px dashed var(--sage);}
-  .brand-tag{font-size:12px; color:var(--ink-soft); letter-spacing:3px; text-transform:uppercase;}
-  .brand-tag[contenteditable]:focus{outline:1px dashed var(--sage);}
-  .admin-toggle{
-    position:absolute; top:16px; right:16px;
-    background:none; border:1px solid var(--line); color:var(--ink-soft);
-    font-size:11px; padding:6px 10px; border-radius:var(--radius);
-    cursor:pointer; letter-spacing:1px;
+  header{padding:0 0 18px; border-bottom:1px solid var(--line); position:relative;}
+  .header-top{display:flex; align-items:center; justify-content:space-between; padding:14px 16px;}
+  .hamburger-btn{
+    background:none; border:1px solid var(--line); width:38px; height:38px; border-radius:var(--radius);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:4px;
   }
-  .admin-toggle:hover{border-color:var(--sage); color:var(--sage-deep);}
-  .admin-toggle.active{background:var(--sage); color:#fff; border-color:var(--sage);}
-  .sync-note{font-size:10px; color:var(--ink-soft); margin-top:6px;}
+  .hamburger-btn span{display:block; width:18px; height:2px; background:var(--ink);}
+  .admin-pill{font-size:10px; color:var(--sage-deep); border:1px solid var(--sage); padding:4px 9px; border-radius:12px;}
+  .banner-wrap{width:100%; max-height:150px; overflow:hidden; background:var(--card); display:none;}
+  .banner-wrap.show{display:block;}
+  .banner-wrap img{width:100%; height:150px; object-fit:cover; display:block;}
+  .header-brand{text-align:center; padding:18px 16px 0;}
+  .brand-name{font-size:26px; font-weight:700; letter-spacing:2px; margin:0 0 4px;}
+  .brand-tag{font-size:12px; color:var(--ink-soft); letter-spacing:3px; text-transform:uppercase;}
+  .sync-note{font-size:10px; color:var(--ink-soft); margin-top:6px; text-align:center;}
   .sync-note.err{color:var(--danger);}
 
-  .filters{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:18px 16px 4px;}
-  .chip{
-    padding:6px 14px; font-size:12px; letter-spacing:1px;
-    border:1px solid var(--line); background:transparent; color:var(--ink-soft);
-    border-radius:20px; cursor:pointer;
+  .sidebar-overlay{display:none; position:fixed; inset:0; background:rgba(51,47,40,0.5); z-index:60;}
+  .sidebar-overlay.show{display:block;}
+  .sidebar{
+    position:fixed; top:0; left:0; bottom:0; width:280px; max-width:82vw; background:#fff;
+    transform:translateX(-100%); transition:transform 0.22s ease; z-index:61; overflow-y:auto;
+    display:flex; flex-direction:column;
   }
+  .sidebar.show{transform:translateX(0);}
+  .sidebar-head{display:flex; justify-content:space-between; align-items:center; padding:18px 18px 10px;}
+  .sidebar-head b{font-family:'Noto Serif TC',serif; font-size:16px;}
+  .sidebar-close{background:none; border:none; font-size:20px; cursor:pointer; color:var(--ink-soft);}
+  .sidebar-item{
+    display:block; width:100%; text-align:left; padding:13px 18px; border:none; background:none;
+    font-size:14px; color:var(--ink); cursor:pointer; border-bottom:1px solid var(--line);
+  }
+  .sidebar-item:hover{background:var(--paper);}
+  .sidebar-item.active{background:var(--paper); font-weight:700;}
+  .sidebar-section-title{padding:14px 18px 6px; font-size:11px; color:var(--ink-soft); letter-spacing:1px; text-transform:uppercase;}
+  .sidebar-admin{margin-top:auto; border-top:2px solid var(--line);}
+  .sidebar-admin .sidebar-item{color:var(--sage-deep);}
+  .sidebar-item.danger{color:var(--danger);}
+
+  .filters{display:flex; flex-wrap:wrap; gap:8px; justify-content:center; padding:18px 16px 4px;}
+  .chip{padding:6px 14px; font-size:12px; letter-spacing:1px; border:1px solid var(--line); background:transparent; color:var(--ink-soft); border-radius:20px; cursor:pointer;}
   .chip.active{background:var(--ink); color:var(--card); border-color:var(--ink);}
 
-  .admin-bar{
-    display:none; max-width:900px; margin:14px auto 0; padding:12px 16px;
-    background:#fff; border:1px solid var(--line); border-radius:var(--radius); font-size:13px;
-  }
-  .admin-bar.show{display:block;}
-  .admin-bar .row{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:8px;}
-  .admin-bar button{
-    font-size:12px; padding:7px 12px; border-radius:var(--radius);
-    border:1px solid var(--ink); background:var(--ink); color:#fff; cursor:pointer;
-  }
-  .admin-bar button.secondary{background:#fff; color:var(--ink);}
-
-  .grid{
-    max-width:1100px; margin:26px auto 100px; padding:0 16px;
-    display:grid; gap:22px;
-    grid-template-columns:repeat(auto-fill, minmax(210px,1fr));
-  }
+  .grid{max-width:1100px; margin:26px auto 100px; padding:0 16px; display:grid; gap:22px; grid-template-columns:repeat(auto-fill, minmax(210px,1fr));}
   .card{background:var(--card); border:1px solid var(--line); position:relative; display:flex; flex-direction:column;}
-  .tag-corner{
-    position:absolute; top:-1px; left:14px; width:16px; height:22px; background:var(--sage);
-    clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%); z-index:2;
-  }
+  .tag-corner{position:absolute; top:-1px; left:14px; width:16px; height:22px; background:var(--sage); clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%); z-index:2;}
   .card img{width:100%; aspect-ratio:3/4; object-fit:cover; display:block; border-bottom:1px solid var(--line); background:#e4dfd3;}
   .card .info{padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1;}
   .card .note{font-size:11px; color:var(--clay); letter-spacing:1px;}
@@ -86,57 +86,60 @@
   .card .pick-row{display:flex; gap:6px; margin-top:2px;}
   .card .pick-row select{flex:1.4; font-size:12px; padding:6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
   .card .pick-row input{width:52px; font-size:12px; padding:6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
-  .card .actions{margin-top:auto; display:flex; gap:6px; padding-top:8px;}
-  .btn-register{
-    flex:1; padding:8px 10px; font-size:12px; letter-spacing:1px;
-    background:var(--ink); color:#fff; border:none; cursor:pointer; border-radius:var(--radius);
-  }
+  .card .actions{margin-top:auto; display:flex; gap:6px; padding-top:8px; flex-wrap:wrap;}
+  .btn-register{flex:1; padding:8px 10px; font-size:12px; letter-spacing:1px; background:var(--ink); color:#fff; border:none; cursor:pointer; border-radius:var(--radius);}
   .btn-register:hover{background:var(--sage-deep);}
   .btn-register:disabled{background:#bbb; cursor:not-allowed;}
   .btn-register.added{background:var(--sage);}
   .btn-edit{padding:8px 10px; font-size:12px; background:#fff; border:1px solid var(--line); cursor:pointer;}
-  .soldout-badge{
-    position:absolute; top:10px; right:10px; background:var(--danger); color:#fff;
-    font-size:10px; padding:3px 8px; letter-spacing:1px; z-index:2;
-  }
+  .soldout-badge{position:absolute; top:10px; right:10px; background:var(--danger); color:#fff; font-size:10px; padding:3px 8px; letter-spacing:1px; z-index:2;}
   .empty{text-align:center; color:var(--ink-soft); padding:60px 20px; font-size:13px;}
 
-  .cart-fab{
-    position:fixed; right:18px; bottom:18px; z-index:40;
-    background:var(--ink); color:#fff; border:none; border-radius:30px;
-    padding:14px 20px; font-size:13px; letter-spacing:1px; cursor:pointer;
-    box-shadow:0 4px 14px rgba(0,0,0,0.25); display:flex; align-items:center; gap:8px;
-  }
-  .cart-fab .badge{
-    background:var(--clay); color:#fff; border-radius:50%; min-width:20px; height:20px;
-    display:inline-flex; align-items:center; justify-content:center; font-size:11px; padding:0 4px;
-  }
+  .btn-quicksoldout{padding:8px 6px; font-size:11px; background:#fff; border:1px solid var(--line); cursor:pointer; white-space:nowrap;}
+  .btn-quicksoldout.is-soldout{background:var(--danger); color:#fff; border-color:var(--danger);}
+  .btn-restock{padding:8px 6px; font-size:11px; background:var(--sage); color:#fff; border:1px solid var(--sage); cursor:pointer; white-space:nowrap;}
+  .stock-badge{font-size:9.5px; color:var(--ink-soft); margin-top:-2px;}
+
+  .media-badge{position:absolute; bottom:10px; left:10px; background:rgba(51,47,40,0.7); color:#fff; font-size:10px; padding:3px 7px; border-radius:10px; z-index:2; display:flex; gap:4px; align-items:center;}
+  .card .img-wrap{position:relative; cursor:pointer;}
+
+  .media-gallery{display:flex; flex-wrap:wrap; gap:14px 10px; margin-top:8px;}
+  .gallery-thumb-item{position:relative; width:64px;}
+  .gallery-thumb-item img{width:64px; height:82px; object-fit:cover; border:1px solid var(--line); display:block;}
+  .gallery-thumb-item .cover-badge{position:absolute; bottom:2px; left:2px; background:var(--sage); color:#fff; font-size:9px; padding:1px 5px; border-radius:6px;}
+  .gallery-thumb-item .thumb-del{position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:var(--danger); color:#fff; border:none; font-size:11px; cursor:pointer; line-height:1;}
+  .gallery-thumb-item .thumb-color-tag{width:64px; margin-top:3px; font-size:9px; padding:2px; border-radius:3px; border:1px solid var(--line); background:#fff;}
+
+  .gallery-main{width:100%; aspect-ratio:3/4; background:#e4dfd3; overflow:hidden; border:1px solid var(--line);}
+  .gallery-main img, .gallery-main video{width:100%; height:100%; object-fit:cover; display:block;}
+  .gallery-thumbs{display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:2px;}
+  .gallery-thumbs .g-thumb{width:50px; height:64px; object-fit:cover; border:2px solid transparent; cursor:pointer; flex-shrink:0;}
+  .gallery-thumbs .g-thumb.active{border-color:var(--sage);}
+  .gallery-thumbs .g-thumb.is-video{display:flex; align-items:center; justify-content:center; background:var(--ink); color:#fff; font-size:16px;}
 
   .overlay{display:none; position:fixed; inset:0; background:rgba(51,47,40,0.55); align-items:center; justify-content:center; z-index:50; padding:16px;}
   .overlay.show{display:flex;}
-  .modal{background:#fff; max-width:440px; width:100%; max-height:88vh; overflow-y:auto; padding:24px; position:relative; border-radius:var(--radius);}
+  .modal{background:#fff; max-width:460px; width:100%; max-height:88vh; overflow-y:auto; padding:24px; position:relative; border-radius:var(--radius);}
+  .modal.wide{max-width:600px;}
   .modal h3{margin:0 0 4px;}
   .modal .sub{font-size:12px; color:var(--ink-soft); margin-bottom:16px;}
   .modal .close{position:absolute; top:14px; right:14px; background:none; border:none; font-size:18px; cursor:pointer; color:var(--ink-soft);}
   .field{margin-bottom:12px;}
   .field label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:4px;}
-  .field input, .field select, .field textarea{
-    width:100%; padding:9px 10px; border:1px solid var(--line); font-size:14px;
-    font-family:inherit; border-radius:var(--radius); background:#FCFAF5;
-  }
+  .field input, .field select, .field textarea{width:100%; padding:9px 10px; border:1px solid var(--line); font-size:14px; font-family:inherit; border-radius:var(--radius); background:#FCFAF5;}
   .field textarea{resize:vertical; min-height:60px;}
   .field-row{display:flex; gap:10px;}
   .field-row .field{flex:1;}
-  .submit-btn{
-    width:100%; padding:12px; background:var(--sage); color:#fff; border:none;
-    font-size:14px; letter-spacing:1px; cursor:pointer; border-radius:var(--radius); margin-top:6px;
-  }
+  .submit-btn{width:100%; padding:12px; background:var(--sage); color:#fff; border:none; font-size:14px; letter-spacing:1px; cursor:pointer; border-radius:var(--radius); margin-top:6px;}
   .submit-btn:hover{background:var(--sage-deep);}
   .submit-btn:disabled{background:#bbb; cursor:not-allowed;}
   .confirm{text-align:center; padding:10px 0;}
   .confirm .mark{font-size:36px; color:var(--sage);}
   .form-err{color:var(--danger); font-size:12px; margin:-4px 0 10px; display:none;}
   .form-err.show{display:block;}
+
+  .cart-fab{position:fixed; right:18px; bottom:18px; z-index:40; background:var(--ink); color:#fff; border:none; border-radius:30px; padding:14px 20px; font-size:13px; letter-spacing:1px; cursor:pointer; box-shadow:0 4px 14px rgba(0,0,0,0.25); display:flex; align-items:center; gap:8px;}
+  .cart-fab .badge{background:var(--clay); color:#fff; border-radius:50%; min-width:20px; height:20px; display:inline-flex; align-items:center; justify-content:center; font-size:11px; padding:0 4px;}
 
   .cart-item{display:flex; gap:10px; padding:10px 0; border-bottom:1px solid var(--line);}
   .cart-item img{width:52px; height:64px; object-fit:cover; background:#e4dfd3; flex-shrink:0;}
@@ -151,50 +154,23 @@
   .chips-input span{background:var(--paper); padding:3px 8px; font-size:11px; border-radius:12px; display:flex; align-items:center; gap:4px;}
   .chips-input span b{cursor:pointer; color:var(--danger); font-weight:700;}
 
-  .checks{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;}
-  .checks label{
-    display:flex; align-items:center; gap:4px; font-size:12px;
-    border:1px solid var(--line); padding:5px 10px; border-radius:14px;
-    cursor:pointer; background:#FCFAF5; user-select:none;
-  }
-  .checks label:has(input:checked){background:var(--sage); border-color:var(--sage); color:#fff;}
-  .checks input{width:auto; margin:0;}
-  .manage-link{font-size:11px; color:var(--sage-deep); text-decoration:underline; cursor:pointer; display:inline-block; margin-top:6px;}
+  .settings-section{border-top:1px solid var(--line); padding-top:16px; margin-top:16px;}
+  .settings-section:first-of-type{border-top:none; padding-top:0; margin-top:0;}
+  .settings-section h4{margin:0 0 10px; font-size:13px; color:var(--sage-deep);}
 
-  .btn-quicksoldout{
-    padding:8px 6px; font-size:11px; background:#fff; border:1px solid var(--line); cursor:pointer; white-space:nowrap;
-  }
-  .btn-quicksoldout.is-soldout{background:var(--danger); color:#fff; border-color:var(--danger);}
-  .btn-restock{padding:8px 6px; font-size:11px; background:var(--sage); color:#fff; border:1px solid var(--sage); cursor:pointer; white-space:nowrap;}
-  .stock-badge{font-size:10px; color:var(--ink-soft); margin-top:-2px;}
+  .variant-add-row{display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; margin-bottom:10px;}
+  .variant-add-row select, .variant-add-row input{padding:8px; font-size:13px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
+  .variant-add-row select{flex:1.3; min-width:90px;}
+  .variant-add-row input{width:80px;}
+  .variant-add-row button{padding:8px 12px; font-size:12px; background:var(--sage); color:#fff; border:none; cursor:pointer; border-radius:var(--radius); white-space:nowrap;}
+  .variant-table{width:100%; font-size:12.5px; border-collapse:collapse; margin-bottom:6px;}
+  .variant-table th, .variant-table td{border:1px solid var(--line); padding:6px 8px; text-align:left;}
+  .variant-table input[type="number"]{width:70px; padding:4px 6px; font-size:12px; border:1px solid var(--line); border-radius:3px;}
+  .variant-table button{border:none; background:none; color:var(--danger); cursor:pointer; font-size:12px;}
 
-  .media-badge{
-    position:absolute; bottom:10px; left:10px; background:rgba(51,47,40,0.7); color:#fff;
-    font-size:10px; padding:3px 7px; border-radius:10px; z-index:2; display:flex; gap:4px; align-items:center;
-  }
-  .card .img-wrap{position:relative; cursor:pointer;}
-
-  .media-gallery{display:flex; flex-wrap:wrap; gap:14px 10px; margin-top:8px;}
-  .gallery-thumb-item{position:relative; width:64px;}
-  .gallery-thumb-item img{width:64px; height:82px; object-fit:cover; border:1px solid var(--line); display:block;}
-  .gallery-thumb-item .cover-badge{
-    position:absolute; bottom:2px; left:2px; background:var(--sage); color:#fff; font-size:9px; padding:1px 5px; border-radius:6px;
-  }
-  .gallery-thumb-item .thumb-del{
-    position:absolute; top:-6px; right:-6px; width:18px; height:18px; border-radius:50%; background:var(--danger); color:#fff;
-    border:none; font-size:11px; cursor:pointer; line-height:1;
-  }
-  .gallery-thumb-item .thumb-color-tag{
-    width:64px; margin-top:3px; font-size:9px; padding:2px; border-radius:3px;
-    border:1px solid var(--line); background:#fff;
-  }
-
-  .gallery-main{width:100%; aspect-ratio:3/4; background:#e4dfd3; overflow:hidden; border:1px solid var(--line);}
-  .gallery-main img, .gallery-main video{width:100%; height:100%; object-fit:cover; display:block;}
-  .gallery-thumbs{display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:2px;}
-  .gallery-thumbs .g-thumb{width:50px; height:64px; object-fit:cover; border:2px solid transparent; cursor:pointer; flex-shrink:0;}
-  .gallery-thumbs .g-thumb.active{border-color:var(--sage);}
-  .gallery-thumbs .g-thumb.is-video{display:flex; align-items:center; justify-content:center; background:var(--ink); color:#fff; font-size:16px;}
+  .banner-upload-preview{width:100%; max-height:110px; overflow:hidden; margin-top:8px; border:1px solid var(--line); display:none;}
+  .banner-upload-preview.show{display:block;}
+  .banner-upload-preview img{width:100%; height:110px; object-fit:cover; display:block;}
 
   .orders-table{width:100%; border-collapse:collapse; font-size:12px; margin-top:10px;}
   .orders-table th, .orders-table td{border:1px solid var(--line); padding:6px 8px; text-align:left; vertical-align:top;}
@@ -205,17 +181,14 @@
 
   footer{text-align:center; padding:30px 16px 40px; font-size:11px; color:var(--ink-soft);}
 
-  .config-warning{
-    max-width:640px; margin:60px auto; padding:24px; background:#fff;
-    border:1px solid var(--danger); font-size:13px; line-height:1.8;
-  }
+  .config-warning{max-width:640px; margin:60px auto; padding:24px; background:#fff; border:1px solid var(--danger); font-size:13px; line-height:1.8;}
   .config-warning code{background:var(--paper); padding:2px 6px; border-radius:3px;}
 
   @media (max-width: 480px){
-    header{padding:36px 16px 16px;}
+    .header-top{padding:12px 12px;}
     .brand-name{font-size:19px; letter-spacing:1px;}
     .brand-tag{font-size:10.5px; letter-spacing:2px;}
-    .admin-toggle{top:10px; right:10px; font-size:10px; padding:5px 9px;}
+    .banner-wrap, .banner-wrap img{height:100px; max-height:100px;}
     .filters{padding:12px 12px 2px;}
     .chip{padding:5px 11px; font-size:11px;}
     .grid{grid-template-columns:repeat(2, 1fr); gap:10px; margin:14px auto 90px; padding:0 12px;}
@@ -237,11 +210,8 @@
     .field label{font-size:11px; margin-bottom:3px;}
     .field input, .field select, .field textarea{font-size:16px; padding:8px 9px;}
     .submit-btn{padding:11px; font-size:14px;}
-    .admin-bar{padding:10px 12px;}
-    .admin-bar .row{flex-direction:column; gap:6px; margin-bottom:6px;}
-    .admin-bar button{width:100%; font-size:11px; padding:8px 10px;}
     .orders-table{font-size:10.5px;}
-    .checks label{font-size:11px; padding:4px 8px;}
+    .variant-add-row select, .variant-add-row input{font-size:16px;}
   }
 </style>
 </head>
@@ -256,24 +226,33 @@
 <div id="appRoot" style="display:none;">
 
 <header>
-  <button class="admin-toggle" id="adminToggleBtn">管理模式</button>
-  <h1 class="brand-name" id="brandName" contenteditable="false">妳的品牌名稱</h1>
-  <div class="brand-tag" id="brandTag" contenteditable="false">日系空氣感選品 · 手動更新中</div>
-  <div class="sync-note" id="syncNote"></div>
+  <div class="header-top">
+    <button class="hamburger-btn" id="menuBtn"><span></span><span></span><span></span></button>
+    <span class="admin-pill" id="adminPill" style="display:none;">管理中</span>
+  </div>
+  <div class="banner-wrap" id="bannerWrap"><img id="bannerImg" src="" alt=""></div>
+  <div class="header-brand">
+    <h1 class="brand-name" id="brandName">妳的品牌名稱</h1>
+    <div class="brand-tag" id="brandTag">日系空氣感選品 · 手動更新中</div>
+    <div class="sync-note" id="syncNote"></div>
+  </div>
 </header>
 
-<div class="admin-bar" id="adminBar">
-  <div class="row">
-    <button id="addProductBtn">+ 新增商品</button>
-    <button class="secondary" id="editBrandBtn">編輯店名/標語</button>
-    <button class="secondary" id="toggleOrdersBtn">查看訂單登記</button>
-    <button class="secondary" id="editCatBtn">編輯分類</button>
-    <button class="secondary" id="editColorSizeBtn">編輯顏色/尺寸清單</button>
-    <button class="secondary" id="editOrderFormBtn">編輯訂單表單</button>
-    <button class="secondary" id="logoutBtn">登出管理帳號</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-head"><b id="sidebarBrand">選單</b><button class="sidebar-close" id="sidebarClose">✕</button></div>
+  <button class="sidebar-item" data-nav-home>🏠 首頁</button>
+  <div class="sidebar-section-title">商品分類</div>
+  <div id="sidebarCategories"></div>
+  <div class="sidebar-admin" id="sidebarAdmin" style="display:none;">
+    <div class="sidebar-section-title">管理</div>
+    <button class="sidebar-item" id="sbAddProduct">+ 新增商品</button>
+    <button class="sidebar-item" id="sbOrders">查看訂單登記</button>
+    <button class="sidebar-item" id="sbSettings">⚙ 設定</button>
+    <button class="sidebar-item danger" id="sbLogout">登出管理帳號</button>
   </div>
-  <div class="row" style="font-size:11px; color:var(--ink-soft);">
-    已登入管理帳號，資料存在雲端資料庫，任何裝置登入都會看到同一份最新資料。
+  <div class="sidebar-admin" id="sidebarLogin" style="display:none;">
+    <button class="sidebar-item" id="sbLogin">管理者登入</button>
   </div>
 </div>
 
@@ -281,9 +260,7 @@
 
 <div class="grid" id="grid"></div>
 
-<button class="cart-fab" id="cartFab">
-  🛍️ 我的清單 <span class="badge" id="cartBadge">0</span>
-</button>
+<button class="cart-fab" id="cartFab">🛍️ 我的清單 <span class="badge" id="cartBadge">0</span></button>
 
 <div class="orders-panel" id="ordersPanel">
   <div class="orders-panel-inner">
@@ -294,6 +271,7 @@
         <button id="exportCsvBtn" style="font-size:12px; padding:7px 12px; border:1px solid var(--line); background:#fff; cursor:pointer;">匯出 CSV</button>
         <button id="exportLineBtn" style="font-size:12px; padding:7px 12px; border:1px solid var(--line); background:#fff; cursor:pointer;">複製 LINE 格式</button>
         <button id="clearOrdersBtn" style="font-size:12px; padding:7px 12px; border:1px solid var(--danger); background:#fff; color:var(--danger); cursor:pointer;">清空訂單</button>
+        <button id="closeOrdersBtn" style="font-size:12px; padding:7px 12px; border:1px solid var(--line); background:#fff; cursor:pointer;">關閉</button>
       </div>
     </div>
     <table class="orders-table" id="ordersTable">
@@ -305,7 +283,6 @@
 
 <footer>© 妳的選品店 · 展示與訂單登記頁面</footer>
 
-<!-- 購物清單 modal -->
 <div class="overlay" id="cartOverlay">
   <div class="modal">
     <button class="close" data-close="cartOverlay">✕</button>
@@ -317,19 +294,10 @@
       <div class="form-err" id="cartErr"></div>
       <div id="orderFormMessage" style="display:none; font-size:13px; background:var(--paper); padding:10px 12px; border-radius:var(--radius); margin-bottom:14px; white-space:pre-line;"></div>
       <form id="cartForm">
-        <div class="field">
-          <label>姓名 *</label>
-          <input type="text" id="ordName" required>
-        </div>
-        <div class="field">
-          <label>聯絡電話 *</label>
-          <input type="tel" id="ordPhone" required>
-        </div>
+        <div class="field"><label>姓名 *</label><input type="text" id="ordName" required></div>
+        <div class="field"><label>聯絡電話 *</label><input type="tel" id="ordPhone" required></div>
         <div id="customFieldsWrap"></div>
-        <div class="field">
-          <label>備註（選填）</label>
-          <textarea id="ordNote" placeholder="例如：取貨方式、其他需求"></textarea>
-        </div>
+        <div class="field"><label>備註（選填）</label><textarea id="ordNote" placeholder="例如：取貨方式、其他需求"></textarea></div>
         <button type="submit" class="submit-btn" id="cartSubmitBtn">送出登記</button>
       </form>
     </div>
@@ -342,70 +310,6 @@
   </div>
 </div>
 
-<!-- 管理者新增/編輯商品 modal -->
-<div class="overlay" id="productOverlay">
-  <div class="modal">
-    <button class="close" data-close="productOverlay">✕</button>
-    <h3 id="productModalTitle">新增商品</h3>
-    <div class="form-err" id="productErr"></div>
-    <form id="productForm">
-      <input type="hidden" id="pId">
-      <div class="field">
-        <label>商品名稱 *</label>
-        <input type="text" id="pName" required>
-      </div>
-      <div class="field-row">
-        <div class="field">
-          <label>價格 (NT$) *</label>
-          <input type="number" id="pPrice" required>
-        </div>
-        <div class="field">
-          <label>分類</label>
-          <select id="pCategory"></select>
-        </div>
-      </div>
-      <div class="field">
-        <label>商品照片（可一次選多張，第一張是封面）*</label>
-        <input type="file" id="pImageFiles" accept="image/*" multiple>
-        <div class="media-gallery" id="pImageGallery"></div>
-        <div id="pImageUploadStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
-      </div>
-      <div class="field">
-        <label>商品短影片（選填，建議 30 秒內，檔案太大上傳會較久）</label>
-        <input type="file" id="pVideoFile" accept="video/*">
-        <div id="pVideoPreviewWrap" style="margin-top:8px; display:none;">
-          <video id="pVideoPreview" controls style="width:160px; display:block; border:1px solid var(--line);"></video>
-          <span class="manage-link" id="removeVideoBtn" style="color:var(--danger);">移除影片</span>
-        </div>
-        <div id="pVideoUploadStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
-      </div>
-      <div class="field">
-        <label>庫存數量（選填，留空 = 不追蹤數量，改用下面手動標記售完）</label>
-        <input type="number" id="pStockQty" min="0" placeholder="例如：10">
-      </div>
-      <div class="field">
-        <label>顏色（勾選這件商品有的顏色，可不選）</label>
-        <div class="checks" id="pColorChecks"></div>
-        <span class="manage-link" id="openColorSizeManage1">+ 管理顏色/尺寸清單</span>
-      </div>
-      <div class="field">
-        <label>尺寸（勾選這件商品有的尺寸，可不選）</label>
-        <div class="checks" id="pSizeChecks"></div>
-      </div>
-      <div class="field">
-        <label>備註小標（選填，例如「闆娘大力推薦」）</label>
-        <input type="text" id="pNote">
-      </div>
-      <div class="field">
-        <label><input type="checkbox" id="pSoldOut" style="width:auto; margin-right:6px;">標記為售完</label>
-      </div>
-      <button type="submit" class="submit-btn">儲存商品</button>
-      <button type="button" id="deleteProductBtn" style="display:none; width:100%; margin-top:8px; padding:10px; background:#fff; border:1px solid var(--danger); color:var(--danger); cursor:pointer; border-radius:2px;">刪除此商品</button>
-    </form>
-  </div>
-</div>
-
-<!-- 商品相簿瀏覽 modal -->
 <div class="overlay" id="galleryOverlay">
   <div class="modal">
     <button class="close" data-close="galleryOverlay">✕</button>
@@ -418,87 +322,122 @@
   </div>
 </div>
 
-<!-- 分類編輯 modal -->
-<div class="overlay" id="catOverlay">
-  <div class="modal">
-    <button class="close" data-close="catOverlay">✕</button>
-    <h3>編輯分類</h3>
-    <div class="field">
-      <label>輸入分類名稱後按 Enter 新增</label>
-      <input type="text" id="catInput" placeholder="例如：上衣 / 洋裝 / 配件">
-    </div>
-    <div class="chips-input" id="catChips"></div>
-  </div>
-</div>
-
-<!-- 顏色/尺寸清單編輯 modal -->
-<div class="overlay" id="colorSizeOverlay">
-  <div class="modal">
-    <button class="close" data-close="colorSizeOverlay">✕</button>
-    <h3>編輯顏色/尺寸清單</h3>
-    <div class="sub">這裡是全店共用的選項庫，新增商品時直接勾選就好，不用每次手打</div>
-    <div class="field">
-      <label>顏色清單 · 輸入後按 Enter 新增</label>
-      <input type="text" id="colorInput" placeholder="例如：黑色 / 白色 / 卡其">
-      <div class="chips-input" id="colorChips"></div>
-    </div>
-    <div class="field">
-      <label>尺寸清單 · 輸入後按 Enter 新增</label>
-      <input type="text" id="sizeInput" placeholder="例如：S / M / L / 均碼">
-      <div class="chips-input" id="sizeChips"></div>
-    </div>
-  </div>
-</div>
-
-<!-- 訂單表單編輯 modal -->
-<div class="overlay" id="orderFormOverlay">
-  <div class="modal">
-    <button class="close" data-close="orderFormOverlay">✕</button>
-    <h3>編輯訂單表單</h3>
-    <div class="sub">寫給顧客的話會顯示在填寫資料的最上方；也可以自己新增欄位，例如取貨門市、地址</div>
-
-    <div class="field">
-      <label>給顧客的話（選填，留空則不顯示）</label>
-      <textarea id="orderMsgInput" placeholder="例如：訂購後將由專人與您確認出貨時間，謝謝您的支持 🌿"></textarea>
-      <button type="button" class="submit-btn" id="saveOrderMsgBtn" style="margin-top:8px;">儲存這段話</button>
-    </div>
-
-    <div class="field" style="border-top:1px solid var(--line); padding-top:16px;">
-      <label>目前的自訂欄位</label>
-      <div id="customFieldsList" style="display:flex; flex-direction:column; gap:6px; margin-top:6px;"></div>
-    </div>
-
-    <div class="field" style="border-top:1px solid var(--line); padding-top:16px;">
-      <label>新增欄位</label>
+<div class="overlay" id="productOverlay">
+  <div class="modal wide">
+    <button class="close" data-close="productOverlay">✕</button>
+    <h3 id="productModalTitle">新增商品</h3>
+    <div class="form-err" id="productErr"></div>
+    <form id="productForm">
+      <input type="hidden" id="pId">
       <div class="field-row">
-        <div class="field">
-          <label>欄位名稱</label>
-          <input type="text" id="newFieldLabel" placeholder="例如：取貨門市">
-        </div>
-        <div class="field">
-          <label>欄位型態</label>
-          <select id="newFieldType">
-            <option value="text">文字輸入</option>
-            <option value="select">下拉選單</option>
-          </select>
-        </div>
+        <div class="field"><label>商品名稱 *</label><input type="text" id="pName" required></div>
+        <div class="field"><label>價格 (NT$) *</label><input type="number" id="pPrice" required></div>
       </div>
-      <div class="field" id="newFieldOptionsWrap" style="display:none;">
-        <label>下拉選項（輸入後按 Enter 新增）</label>
-        <input type="text" id="newFieldOptionInput" placeholder="例如：台北信義店">
-        <div class="chips-input" id="newFieldOptionChips"></div>
+      <div class="field"><label>分類</label><select id="pCategory" data-settings-key="categories"></select></div>
+      <div class="field">
+        <label>商品照片（可一次選多張，第一張是封面）*</label>
+        <input type="file" id="pImageFiles" accept="image/*" multiple>
+        <div class="media-gallery" id="pImageGallery"></div>
+        <div id="pImageUploadStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
       </div>
       <div class="field">
-        <label><input type="checkbox" id="newFieldRequired" style="width:auto; margin-right:6px;">客人必填</label>
+        <label>商品短影片（選填，建議 30 秒內）</label>
+        <input type="file" id="pVideoFile" accept="video/*">
+        <div id="pVideoPreviewWrap" style="margin-top:8px; display:none;">
+          <video id="pVideoPreview" controls style="width:160px; display:block; border:1px solid var(--line);"></video>
+          <span id="removeVideoBtn" style="color:var(--danger); cursor:pointer; font-size:11px; text-decoration:underline;">移除影片</span>
+        </div>
+        <div id="pVideoUploadStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
       </div>
-      <button type="button" class="submit-btn" id="addCustomFieldBtn">+ 新增這個欄位</button>
+      <div class="field">
+        <label>規格與庫存（選顏色、選尺寸、填數量，逐筆新增；不分顏色或不分尺寸可留空）</label>
+        <div class="variant-add-row">
+          <select id="vColor" data-settings-key="colors"><option value="">（不分顏色）</option></select>
+          <select id="vSize" data-settings-key="sizes"><option value="">（不分尺寸）</option></select>
+          <input type="number" id="vStock" placeholder="庫存數量" min="0">
+          <button type="button" id="addVariantBtn">+ 新增規格</button>
+        </div>
+        <div id="variantList"></div>
+      </div>
+      <div class="field"><label>備註小標（選填，例如「闆娘大力推薦」）</label><input type="text" id="pNote"></div>
+      <div class="field"><label><input type="checkbox" id="pSoldOut" style="width:auto; margin-right:6px;">標記為售完（會覆蓋規格庫存的判斷，強制下架）</label></div>
+      <button type="submit" class="submit-btn">儲存商品</button>
+      <button type="button" id="deleteProductBtn" style="display:none; width:100%; margin-top:8px; padding:10px; background:#fff; border:1px solid var(--danger); color:var(--danger); cursor:pointer; border-radius:2px;">刪除此商品</button>
+    </form>
+  </div>
+</div>
+
+<div class="overlay" id="settingsOverlay">
+  <div class="modal wide">
+    <button class="close" data-close="settingsOverlay">✕</button>
+    <h3>設定</h3>
+
+    <div class="settings-section">
+      <h4>品牌名稱 / 標語</h4>
+      <div class="field-row">
+        <div class="field"><label>店名</label><input type="text" id="setBrandName"></div>
+        <div class="field"><label>標語</label><input type="text" id="setBrandTag"></div>
+      </div>
+      <button type="button" class="submit-btn" id="saveBrandBtn">儲存店名/標語</button>
+    </div>
+
+    <div class="settings-section">
+      <h4>頁首橫幅圖片（橫式，不用太大，建議寬圖）</h4>
+      <input type="file" accept="image/*" id="bannerFile">
+      <div class="banner-upload-preview" id="bannerPreviewWrap"><img id="bannerPreviewImg" src=""></div>
+      <div id="bannerStatus" style="font-size:11px; color:var(--ink-soft); margin-top:4px;"></div>
+      <span id="removeBannerBtn" style="display:none; color:var(--danger); cursor:pointer; font-size:11px; text-decoration:underline;">移除橫幅圖片</span>
+    </div>
+
+    <div class="settings-section">
+      <h4>商品分類</h4>
+      <div class="field"><label>輸入分類名稱後按 Enter 新增</label><input type="text" id="catInput" placeholder="例如：上衣 / 洋裝 / 配件"></div>
+      <div class="chips-input" id="catChips"></div>
+    </div>
+
+    <div class="settings-section">
+      <h4>顏色清單</h4>
+      <div class="field"><label>輸入顏色後按 Enter 新增</label><input type="text" id="colorInput" placeholder="例如：黑色 / 白色 / 卡其"></div>
+      <div class="chips-input" id="colorChips"></div>
+    </div>
+
+    <div class="settings-section">
+      <h4>尺寸清單</h4>
+      <div class="field"><label>輸入尺寸後按 Enter 新增</label><input type="text" id="sizeInput" placeholder="例如：S / M / L / 均碼"></div>
+      <div class="chips-input" id="sizeChips"></div>
+    </div>
+
+    <div class="settings-section">
+      <h4>訂單表單</h4>
+      <div class="field">
+        <label>給顧客的話（選填，顯示在填寫資料最上方）</label>
+        <textarea id="orderMsgInput" placeholder="例如：訂購後將由專人與您確認出貨時間，謝謝您的支持 🌿"></textarea>
+        <button type="button" class="submit-btn" id="saveOrderMsgBtn" style="margin-top:8px;">儲存這段話</button>
+      </div>
+      <div class="field" style="border-top:1px solid var(--line); padding-top:14px;">
+        <label>目前的自訂欄位</label>
+        <div id="customFieldsList" style="display:flex; flex-direction:column; gap:6px; margin-top:6px;"></div>
+      </div>
+      <div class="field" style="border-top:1px solid var(--line); padding-top:14px;">
+        <label>新增欄位</label>
+        <div class="field-row">
+          <div class="field"><label>欄位名稱</label><input type="text" id="newFieldLabel" placeholder="例如：取貨門市"></div>
+          <div class="field"><label>欄位型態</label><select id="newFieldType"><option value="text">文字輸入</option><option value="select">下拉選單</option></select></div>
+        </div>
+        <div class="field" id="newFieldOptionsWrap" style="display:none;">
+          <label>下拉選項（輸入後按 Enter 新增）</label>
+          <input type="text" id="newFieldOptionInput" placeholder="例如：台北信義店">
+          <div class="chips-input" id="newFieldOptionChips"></div>
+        </div>
+        <div class="field"><label><input type="checkbox" id="newFieldRequired" style="width:auto; margin-right:6px;">客人必填</label></div>
+        <button type="button" class="submit-btn" id="addCustomFieldBtn">+ 新增這個欄位</button>
+      </div>
     </div>
   </div>
 </div>
 
 </div><!-- /appRoot -->
 
-<!-- 管理者登入 modal -->
 <div class="overlay" id="loginOverlay">
   <div class="modal">
     <button class="close" data-close="loginOverlay">✕</button>
@@ -506,24 +445,14 @@
     <div class="sub">用妳在 Supabase 建立的管理帳號登入</div>
     <div class="form-err" id="loginErr"></div>
     <form id="loginForm">
-      <div class="field">
-        <label>Email</label>
-        <input type="email" id="loginEmail" required>
-      </div>
-      <div class="field">
-        <label>密碼</label>
-        <input type="password" id="loginPassword" required>
-      </div>
+      <div class="field"><label>Email</label><input type="email" id="loginEmail" required></div>
+      <div class="field"><label>密碼</label><input type="password" id="loginPassword" required></div>
       <button type="submit" class="submit-btn">登入</button>
     </form>
   </div>
 </div>
 
 <script>
-/* =========================================================
-   Supabase 連線設定 —— 換成妳自己的 Project URL 和 anon key
-   （在 Supabase 專案：Project Settings → API 頁面可以找到）
-   ========================================================= */
 const SUPABASE_URL = 'https://lvazkqgnzdlolqbqooci.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2YXprcWduemRsb2xxYnFvb2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMDc3MDksImV4cCI6MjEwMTc4MzcwOX0.F2HQlujLQJKOJPANUjuKzRFhTNHo1lQu2gsSBSUqXNM';
 
@@ -538,14 +467,18 @@ document.getElementById('appRoot').style.display = 'block';
 let state = {
   products: [],
   orders: [],
-  settings: { brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', categories:['上衣','下身','洋裝','外套','配件'], colors:['黑色','白色','米色','卡其'], sizes:['均碼','S','M','L','XL'], order_form_message:'', custom_fields:[] },
-  cart: JSON.parse(localStorage.getItem('shop_cart_v3') || '[]'),
+  settings: {
+    brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', banner_url:'',
+    categories:['上衣','下身','洋裝','外套','配件'], colors:['黑色','白色','米色','卡其'], sizes:['均碼','S','M','L','XL'],
+    order_form_message:'', custom_fields:[]
+  },
+  cart: JSON.parse(localStorage.getItem('shop_cart_v4') || '[]'),
   adminMode:false,
   activeCategory:'全部'
 };
 
 function cryptoId(){ return 'p_'+Math.random().toString(36).slice(2,10)+Date.now().toString(36); }
-function saveCart(){ localStorage.setItem('shop_cart_v3', JSON.stringify(state.cart)); }
+function saveCart(){ localStorage.setItem('shop_cart_v4', JSON.stringify(state.cart)); }
 function escHtml(s){ return String(s??'').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
 function escAttr(s){ return escHtml(s); }
 
@@ -555,7 +488,6 @@ function setSyncNote(msg, isErr){
   el.classList.toggle('err', !!isErr);
 }
 
-/* ---------- data loading ---------- */
 async function loadSettings(){
   const { data, error } = await sb.from('settings').select('*').eq('id',1).single();
   if(error){ setSyncNote('讀取店家設定失敗：'+error.message, true); return; }
@@ -572,9 +504,30 @@ async function loadOrders(){
   state.orders = data;
 }
 
-/* ---------- render ---------- */
+function hasVariants(p){ return p.variants && p.variants.length > 0; }
+function availableColors(p){
+  if(hasVariants(p)) return [...new Set(p.variants.map(v=>v.color).filter(Boolean))];
+  return p.colors || [];
+}
+function availableSizesForColor(p, color){
+  if(hasVariants(p)) return [...new Set(p.variants.filter(v => !color || v.color===color).map(v=>v.size).filter(Boolean))];
+  return p.sizes || [];
+}
+function variantStock(p, color, size){
+  if(hasVariants(p)){
+    const v = p.variants.find(v => (v.color||'')===(color||'') && (v.size||'')===(size||''));
+    return v ? Number(v.stock) : null;
+  }
+  return p.stock_qty;
+}
+function totalStock(p){
+  if(hasVariants(p)) return p.variants.reduce((s,v)=>s+(Number(v.stock)||0),0);
+  return p.stock_qty;
+}
 function isSoldOut(p){
-  return !!p.sold_out || (p.stock_qty != null && p.stock_qty <= 0);
+  if(p.sold_out) return true;
+  if(hasVariants(p)) return p.variants.every(v => (Number(v.stock)||0) <= 0);
+  return p.stock_qty != null && p.stock_qty <= 0;
 }
 function galleryOf(p){
   if(p.photo_gallery && p.photo_gallery.length) return p.photo_gallery;
@@ -594,38 +547,67 @@ function coverImage(p, color){
   const photos = photosForColor(p, color || '');
   return (photos[0] && photos[0].url) || '';
 }
+
 function renderBrand(){
   document.getElementById('brandName').textContent = state.settings.brand_name;
   document.getElementById('brandTag').textContent = state.settings.brand_tag;
+  document.getElementById('sidebarBrand').textContent = state.settings.brand_name;
+  const bw = document.getElementById('bannerWrap');
+  if(state.settings.banner_url){
+    document.getElementById('bannerImg').src = state.settings.banner_url;
+    bw.classList.add('show');
+  } else {
+    bw.classList.remove('show');
+  }
 }
 
 function renderFilters(){
-  const wrap = document.getElementById('filters');
   const cats = ['全部', ...(state.settings.categories||[])];
-  wrap.innerHTML = cats.map(c =>
-    `<button class="chip ${state.activeCategory===c?'active':''}" data-cat="${escAttr(c)}">${escHtml(c)}</button>`
-  ).join('');
+  const wrap = document.getElementById('filters');
+  wrap.innerHTML = cats.map(c => `<button class="chip ${state.activeCategory===c?'active':''}" data-cat="${escAttr(c)}">${escHtml(c)}</button>`).join('');
   wrap.querySelectorAll('.chip').forEach(btn=>{
     btn.addEventListener('click', ()=>{ state.activeCategory = btn.dataset.cat; renderFilters(); renderGrid(); });
   });
+  renderSidebarCategories();
 }
+function renderSidebarCategories(){
+  const cats = ['全部', ...(state.settings.categories||[])];
+  const wrap = document.getElementById('sidebarCategories');
+  wrap.innerHTML = cats.map(c => `<button class="sidebar-item ${state.activeCategory===c?'active':''}" data-sidebar-cat="${escAttr(c)}">${escHtml(c)}</button>`).join('');
+  wrap.querySelectorAll('[data-sidebar-cat]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      state.activeCategory = btn.dataset.sidebarCat;
+      renderFilters(); renderGrid(); closeSidebar();
+      window.scrollTo({top:0, behavior:'smooth'});
+    });
+  });
+}
+
+function openSidebar(){ document.getElementById('sidebar').classList.add('show'); document.getElementById('sidebarOverlay').classList.add('show'); }
+function closeSidebar(){ document.getElementById('sidebar').classList.remove('show'); document.getElementById('sidebarOverlay').classList.remove('show'); }
+document.getElementById('menuBtn').addEventListener('click', openSidebar);
+document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+document.getElementById('sidebarOverlay').addEventListener('click', closeSidebar);
+document.querySelector('[data-nav-home]').addEventListener('click', ()=>{
+  state.activeCategory = '全部';
+  renderFilters(); renderGrid(); closeSidebar();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
 
 function renderGrid(){
   const grid = document.getElementById('grid');
   let list = state.products;
-  if(state.activeCategory !== '全部'){
-    list = list.filter(p => p.category === state.activeCategory);
-  }
+  if(state.activeCategory !== '全部'){ list = list.filter(p => p.category === state.activeCategory); }
   if(list.length === 0){
-    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">目前這個分類還沒有商品${state.adminMode ? '，點上方「+ 新增商品」開始吧' : ''}</div>`;
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">目前這個分類還沒有商品${state.adminMode ? '，從左側選單「+ 新增商品」開始吧' : ''}</div>`;
     return;
   }
   grid.innerHTML = list.map(p => {
-    const colors = p.colors || [];
-    const sizes = p.sizes || [];
+    const colors = availableColors(p);
     const gallery = galleryOf(p);
     const soldOut = isSoldOut(p);
     const mediaCount = gallery.length + (p.video_url ? 1 : 0);
+    const stockLabel = hasVariants(p) ? ('規格庫存合計 '+totalStock(p)+' 件') : (p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存');
     return `
     <div class="card">
       <span class="tag-corner"></span>
@@ -638,28 +620,50 @@ function renderGrid(){
         ${p.note ? `<div class="note">${escHtml(p.note)}</div>` : ''}
         <div class="name">${escHtml(p.name)}</div>
         <div class="price">NT$ ${Number(p.price).toLocaleString()}</div>
-        ${state.adminMode ? `<div class="stock-badge">${p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存'}・已售 ${p.sold_count||0} 件</div>` : ''}
-        <div class="pick-row">
-          ${colors.length ? `<select data-color-of="${p.id}" ${soldOut ? 'disabled' : ''}>${colors.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
-          ${sizes.length ? `<select data-size-of="${p.id}" ${soldOut ? 'disabled' : ''}>${sizes.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
-          <input type="number" min="1" ${p.stock_qty!=null ? `max="${p.stock_qty}"` : ''} value="1" data-qty-of="${p.id}" ${soldOut ? 'disabled' : ''}>
-        </div>
+        ${state.adminMode ? `<div class="stock-badge">${stockLabel}・已售 ${p.sold_count||0} 件</div>` : ''}
+        <div class="pick-row">${renderPickRowInner(p, p.id)}</div>
         <div class="actions">
-          <button class="btn-register" ${soldOut ? 'disabled' : ''} data-add="${p.id}">${soldOut ? '已售完' : '加入清單'}</button>
+          ${state.adminMode ? '' : `<button class="btn-register" ${soldOut ? 'disabled' : ''} data-add="${p.id}">${soldOut ? '已售完' : '加入清單'}</button>`}
           ${state.adminMode ? `<button class="btn-edit" data-edit="${p.id}">編輯</button>` : ''}
           ${state.adminMode ? `<button class="btn-quicksoldout ${p.sold_out?'is-soldout':''}" data-quick-soldout="${p.id}">${p.sold_out ? '取消標記' : '標售完'}</button>` : ''}
-          ${state.adminMode && p.stock_qty!=null ? `<button class="btn-restock" data-restock="${p.id}">+ 進貨</button>` : ''}
+          ${state.adminMode && (hasVariants(p) || p.stock_qty!=null) ? `<button class="btn-restock" data-restock="${p.id}">+ 進貨</button>` : ''}
         </div>
       </div>
     </div>
   `}).join('');
 
-  grid.querySelectorAll('[data-add]').forEach(btn=>{
-    btn.addEventListener('click', ()=> addToCart(btn.dataset.add, btn));
-  });
-  grid.querySelectorAll('[data-edit]').forEach(btn=>{
-    btn.addEventListener('click', ()=> openProductModal(btn.dataset.edit));
-  });
+  bindGridEvents(grid);
+}
+
+function renderPickRowInner(p, pid){
+  const colors = availableColors(p);
+  const soldOut = isSoldOut(p);
+  const firstColor = colors[0] || '';
+  const sizes = availableSizesForColor(p, firstColor);
+  const stock = variantStock(p, firstColor, sizes[0]||'');
+  return `
+    ${colors.length ? `<select data-color-of="${pid}" ${soldOut ? 'disabled' : ''}>${colors.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+    ${sizes.length ? `<select data-size-of="${pid}" ${soldOut ? 'disabled' : ''}>${sizes.map(v => `<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+    <input type="number" min="1" ${stock!=null ? `max="${Math.max(stock,0)}"` : ''} value="1" data-qty-of="${pid}" ${soldOut ? 'disabled' : ''}>
+  `;
+}
+
+function refreshPickRowStock(p, card, pid){
+  const colorSel = card.querySelector(`[data-color-of="${pid}"]`);
+  const sizeSel = card.querySelector(`[data-size-of="${pid}"]`);
+  const qtyInput = card.querySelector(`[data-qty-of="${pid}"]`);
+  const color = colorSel ? colorSel.value : '';
+  const size = sizeSel ? sizeSel.value : '';
+  const stock = variantStock(p, color, size);
+  if(qtyInput){
+    if(stock!=null){ qtyInput.max = Math.max(stock,0); if(Number(qtyInput.value) > stock) qtyInput.value = Math.max(stock,1); }
+    else { qtyInput.removeAttribute('max'); }
+  }
+}
+
+function bindGridEvents(grid){
+  grid.querySelectorAll('[data-add]').forEach(btn=>{ btn.addEventListener('click', ()=> addToCart(btn.dataset.add, btn)); });
+  grid.querySelectorAll('[data-edit]').forEach(btn=>{ btn.addEventListener('click', ()=> openProductModal(btn.dataset.edit)); });
   grid.querySelectorAll('[data-open-gallery]').forEach(el=>{
     el.addEventListener('click', ()=>{
       const id = el.dataset.openGallery;
@@ -676,6 +680,22 @@ function renderGrid(){
       const card = sel.closest('.card');
       const img = card ? card.querySelector('.img-wrap img') : null;
       if(img) img.src = coverImage(p, sel.value);
+      if(hasVariants(p)){
+        const sizeSel = card.querySelector(`[data-size-of="${id}"]`);
+        if(sizeSel){
+          const sizes = availableSizesForColor(p, sel.value);
+          sizeSel.innerHTML = sizes.map(v=>`<option>${escHtml(v)}</option>`).join('');
+        }
+      }
+      refreshPickRowStock(p, card, id);
+    });
+  });
+  grid.querySelectorAll('[data-size-of]').forEach(sel=>{
+    sel.addEventListener('change', ()=>{
+      const id = sel.dataset.sizeOf;
+      const p = state.products.find(x=>x.id===id);
+      if(!p) return;
+      refreshPickRowStock(p, sel.closest('.card'), id);
     });
   });
   grid.querySelectorAll('[data-quick-soldout]').forEach(btn=>{
@@ -684,28 +704,14 @@ function renderGrid(){
       const p = state.products.find(x=>x.id===id);
       const { error } = await sb.from('products').update({ sold_out: !p.sold_out }).eq('id', id);
       if(error){ alert('更新失敗：'+error.message); return; }
-      await loadProducts();
-      renderGrid();
+      await loadProducts(); renderGrid();
     });
   });
   grid.querySelectorAll('[data-restock]').forEach(btn=>{
-    btn.addEventListener('click', async ()=>{
-      const id = btn.dataset.restock;
-      const p = state.products.find(x=>x.id===id);
-      const input = prompt('這次進貨要新增幾件到庫存？（目前庫存：'+(p.stock_qty??0)+'）', '10');
-      if(input===null) return;
-      const addQty = Number(input);
-      if(!Number.isFinite(addQty) || addQty<=0){ alert('請輸入正確的數字'); return; }
-      const newQty = (p.stock_qty||0) + addQty;
-      const { error } = await sb.from('products').update({ stock_qty:newQty }).eq('id', id);
-      if(error){ alert('更新失敗：'+error.message); return; }
-      await loadProducts();
-      renderGrid();
-    });
+    btn.addEventListener('click', ()=> openProductModal(btn.dataset.restock));
   });
 }
 
-/* ---------- cart (stays local to the customer's browser) ---------- */
 function addToCart(productId, btnEl){
   const p = state.products.find(x=>x.id===productId);
   if(!p) return;
@@ -719,12 +725,11 @@ function addToCart(productId, btnEl){
   const qty = Math.max(1, Number(qtyInput ? qtyInput.value : 1) || 1);
   const cover = coverImage(p, color);
 
-  const existing = state.cart.find(c => c.productId===productId && c.variant===variant);
+  const existing = state.cart.find(c => c.productId===productId && c.color===color && c.size===size);
   if(existing){ existing.qty += qty; } else {
-    state.cart.push({ cartId: cryptoId(), productId, name:p.name, price:p.price, image:cover, variant, qty });
+    state.cart.push({ cartId: cryptoId(), productId, name:p.name, price:p.price, image:cover, color, size, variant, qty });
   }
-  saveCart();
-  updateCartBadge();
+  saveCart(); updateCartBadge();
   if(btnEl){
     const original = btnEl.textContent;
     btnEl.textContent = '已加入 ✓';
@@ -737,83 +742,6 @@ function updateCartBadge(){
   const count = state.cart.reduce((s,c)=>s+c.qty,0);
   document.getElementById('cartBadge').textContent = count;
 }
-
-/* ---------- product gallery (multi photo / video, filtered by color) ---------- */
-let galleryProductId = null;
-let galleryColor = '';
-let galleryMedia = [];
-let galleryIndex = 0;
-
-function rebuildGalleryMedia(p){
-  const photos = photosForColor(p, galleryColor);
-  galleryMedia = [
-    ...photos.map(m => ({ type:'image', url:m.url })),
-    ...(p.video_url ? [{ type:'video', url:p.video_url }] : [])
-  ];
-  galleryIndex = 0;
-}
-
-function openGallery(productId, initialColor){
-  const p = state.products.find(x=>x.id===productId);
-  if(!p) return;
-  galleryProductId = productId;
-  galleryColor = initialColor || (p.colors && p.colors[0]) || '';
-  rebuildGalleryMedia(p);
-  document.getElementById('galleryName').textContent = p.name;
-  document.getElementById('galleryPrice').textContent = 'NT$ ' + Number(p.price).toLocaleString();
-  renderGalleryMain();
-  renderGalleryThumbs();
-  renderGalleryPickRow(p);
-  showOverlay('galleryOverlay');
-}
-
-function renderGalleryMain(){
-  const main = document.getElementById('galleryMain');
-  const m = galleryMedia[galleryIndex];
-  if(!m){ main.innerHTML = ''; return; }
-  main.innerHTML = m.type === 'video'
-    ? `<video src="${escAttr(m.url)}" controls playsinline></video>`
-    : `<img src="${escAttr(m.url)}" alt="">`;
-}
-function renderGalleryThumbs(){
-  const wrap = document.getElementById('galleryThumbs');
-  if(galleryMedia.length <= 1){ wrap.innerHTML = ''; return; }
-  wrap.innerHTML = galleryMedia.map((m,i) =>
-    m.type === 'video'
-      ? `<div class="g-thumb is-video ${i===galleryIndex?'active':''}" data-gidx="${i}">▶</div>`
-      : `<img class="g-thumb ${i===galleryIndex?'active':''}" data-gidx="${i}" src="${escAttr(m.url)}">`
-  ).join('');
-  wrap.querySelectorAll('[data-gidx]').forEach(el=>{
-    el.addEventListener('click', ()=>{ galleryIndex = Number(el.dataset.gidx); renderGalleryMain(); renderGalleryThumbs(); });
-  });
-}
-function renderGalleryPickRow(p){
-  const colors = p.colors || [];
-  const sizes = p.sizes || [];
-  const soldOut = isSoldOut(p);
-  const wrap = document.getElementById('galleryPickRow');
-  wrap.innerHTML = `
-    ${colors.length ? `<select data-color-of="${p.id}" ${soldOut?'disabled':''}>${colors.map(v=>`<option ${v===galleryColor?'selected':''}>${escHtml(v)}</option>`).join('')}</select>` : ''}
-    ${sizes.length ? `<select data-size-of="${p.id}" ${soldOut?'disabled':''}>${sizes.map(v=>`<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
-    <input type="number" min="1" ${p.stock_qty!=null?`max="${p.stock_qty}"`:''} value="1" data-qty-of="${p.id}" ${soldOut?'disabled':''}>
-  `;
-  const colorSelInModal = wrap.querySelector(`[data-color-of="${p.id}"]`);
-  if(colorSelInModal){
-    colorSelInModal.addEventListener('change', ()=>{
-      galleryColor = colorSelInModal.value;
-      rebuildGalleryMedia(p);
-      renderGalleryMain();
-      renderGalleryThumbs();
-    });
-  }
-  const addBtn = document.getElementById('galleryAddBtn');
-  addBtn.disabled = soldOut;
-  addBtn.textContent = soldOut ? '已售完' : '加入清單';
-}
-document.getElementById('galleryAddBtn').addEventListener('click', ()=>{
-  if(!galleryProductId) return;
-  addToCart(galleryProductId, document.getElementById('galleryAddBtn'));
-});
 
 function renderCart(){
   const wrap = document.getElementById('cartItems');
@@ -846,37 +774,25 @@ document.getElementById('cartFab').addEventListener('click', ()=>{
   document.getElementById('cartWrap').style.display = 'block';
   document.getElementById('cartConfirmWrap').style.display = 'none';
   document.getElementById('cartErr').classList.remove('show');
-  renderCart();
-  renderOrderFormMessage();
-  renderCustomFieldsInForm();
+  renderCart(); renderOrderFormMessage(); renderCustomFieldsInForm();
   showOverlay('cartOverlay');
 });
 
 function renderOrderFormMessage(){
   const el = document.getElementById('orderFormMessage');
   const msg = (state.settings.order_form_message || '').trim();
-  if(msg){ el.textContent = msg; el.style.display = 'block'; }
-  else { el.style.display = 'none'; }
+  if(msg){ el.textContent = msg; el.style.display = 'block'; } else { el.style.display = 'none'; }
 }
-
 function renderCustomFieldsInForm(){
   const wrap = document.getElementById('customFieldsWrap');
   const fields = state.settings.custom_fields || [];
   wrap.innerHTML = fields.map(f => {
     if(f.type === 'select'){
-      return `
-        <div class="field">
-          <label>${escHtml(f.label)}${f.required ? ' *' : ''}</label>
-          <select data-custom-field="${f.id}" ${f.required ? 'required' : ''}>
-            ${(f.options||[]).map(o => `<option>${escHtml(o)}</option>`).join('')}
-          </select>
-        </div>`;
+      return `<div class="field"><label>${escHtml(f.label)}${f.required ? ' *' : ''}</label>
+        <select data-custom-field="${f.id}" ${f.required ? 'required' : ''}>${(f.options||[]).map(o => `<option>${escHtml(o)}</option>`).join('')}</select></div>`;
     }
-    return `
-      <div class="field">
-        <label>${escHtml(f.label)}${f.required ? ' *' : ''}</label>
-        <input type="text" data-custom-field="${f.id}" ${f.required ? 'required' : ''}>
-      </div>`;
+    return `<div class="field"><label>${escHtml(f.label)}${f.required ? ' *' : ''}</label>
+      <input type="text" data-custom-field="${f.id}" ${f.required ? 'required' : ''}></div>`;
   }).join('');
 }
 
@@ -892,7 +808,7 @@ document.getElementById('cartForm').addEventListener('submit', async e=>{
     customer_name: document.getElementById('ordName').value.trim(),
     phone: document.getElementById('ordPhone').value.trim(),
     note: document.getElementById('ordNote').value.trim(),
-    items: state.cart.map(c => ({ productId:c.productId, productName:c.name, variant:c.variant, qty:c.qty, price:c.price })),
+    items: state.cart.map(c => ({ productId:c.productId, productName:c.name, variant:c.variant, color:c.color, size:c.size, qty:c.qty, price:c.price })),
     custom_data: (state.settings.custom_fields || []).reduce((acc, f) => {
       const el = document.querySelector(`[data-custom-field="${f.id}"]`);
       acc[f.label] = el ? el.value.trim() : '';
@@ -912,23 +828,96 @@ document.getElementById('cartForm').addEventListener('submit', async e=>{
     errEl.classList.add('show');
     return;
   }
-  await loadProducts();
-  renderGrid();
+  await loadProducts(); renderGrid();
   state.cart = [];
-  saveCart();
-  updateCartBadge();
+  saveCart(); updateCartBadge();
   document.getElementById('cartForm').reset();
   document.getElementById('cartWrap').style.display = 'none';
   document.getElementById('cartConfirmWrap').style.display = 'block';
 });
 
-/* ---------- admin auth ---------- */
-document.getElementById('adminToggleBtn').addEventListener('click', ()=>{
-  if(state.adminMode) return; // use 登出 button instead
+let galleryProductId = null;
+let galleryColor = '';
+let galleryMedia = [];
+let galleryIndex = 0;
+
+function rebuildGalleryMedia(p){
+  const photos = photosForColor(p, galleryColor);
+  galleryMedia = [
+    ...photos.map(m => ({ type:'image', url:m.url })),
+    ...(p.video_url ? [{ type:'video', url:p.video_url }] : [])
+  ];
+  galleryIndex = 0;
+}
+
+function openGallery(productId, initialColor){
+  const p = state.products.find(x=>x.id===productId);
+  if(!p) return;
+  galleryProductId = productId;
+  galleryColor = initialColor || (availableColors(p)[0]) || '';
+  rebuildGalleryMedia(p);
+  document.getElementById('galleryName').textContent = p.name;
+  document.getElementById('galleryPrice').textContent = 'NT$ ' + Number(p.price).toLocaleString();
+  renderGalleryMain(); renderGalleryThumbs(); renderGalleryPickRow(p);
+  showOverlay('galleryOverlay');
+}
+function renderGalleryMain(){
+  const main = document.getElementById('galleryMain');
+  const m = galleryMedia[galleryIndex];
+  if(!m){ main.innerHTML = ''; return; }
+  main.innerHTML = m.type === 'video' ? `<video src="${escAttr(m.url)}" controls playsinline></video>` : `<img src="${escAttr(m.url)}" alt="">`;
+}
+function renderGalleryThumbs(){
+  const wrap = document.getElementById('galleryThumbs');
+  if(galleryMedia.length <= 1){ wrap.innerHTML = ''; return; }
+  wrap.innerHTML = galleryMedia.map((m,i) =>
+    m.type === 'video'
+      ? `<div class="g-thumb is-video ${i===galleryIndex?'active':''}" data-gidx="${i}">▶</div>`
+      : `<img class="g-thumb ${i===galleryIndex?'active':''}" data-gidx="${i}" src="${escAttr(m.url)}">`
+  ).join('');
+  wrap.querySelectorAll('[data-gidx]').forEach(el=>{
+    el.addEventListener('click', ()=>{ galleryIndex = Number(el.dataset.gidx); renderGalleryMain(); renderGalleryThumbs(); });
+  });
+}
+function renderGalleryPickRow(p){
+  const colors = availableColors(p);
+  const soldOut = isSoldOut(p);
+  const activeColor = galleryColor || colors[0] || '';
+  const sizes = availableSizesForColor(p, activeColor);
+  const stock = variantStock(p, activeColor, sizes[0]||'');
+  const wrap = document.getElementById('galleryPickRow');
+  wrap.innerHTML = `
+    ${colors.length ? `<select data-color-of="${p.id}" ${soldOut?'disabled':''}>${colors.map(v=>`<option ${v===galleryColor?'selected':''}>${escHtml(v)}</option>`).join('')}</select>` : ''}
+    ${sizes.length ? `<select data-size-of="${p.id}" ${soldOut?'disabled':''}>${sizes.map(v=>`<option>${escHtml(v)}</option>`).join('')}</select>` : ''}
+    <input type="number" min="1" ${stock!=null?`max="${Math.max(stock,0)}"`:''} value="1" data-qty-of="${p.id}" ${soldOut?'disabled':''}>
+  `;
+  const colorSelInModal = wrap.querySelector(`[data-color-of="${p.id}"]`);
+  if(colorSelInModal){
+    colorSelInModal.addEventListener('change', ()=>{
+      galleryColor = colorSelInModal.value;
+      rebuildGalleryMedia(p); renderGalleryMain(); renderGalleryThumbs(); renderGalleryPickRow(p);
+    });
+  }
+  const sizeSelInModal = wrap.querySelector(`[data-size-of="${p.id}"]`);
+  if(sizeSelInModal){
+    sizeSelInModal.addEventListener('change', ()=>{
+      const stock2 = variantStock(p, galleryColor, sizeSelInModal.value);
+      const qtyInput = wrap.querySelector(`[data-qty-of="${p.id}"]`);
+      if(qtyInput){ if(stock2!=null){ qtyInput.max = Math.max(stock2,0); } else { qtyInput.removeAttribute('max'); } }
+    });
+  }
+}
+document.getElementById('galleryAddBtn').addEventListener('click', ()=>{
+  if(!galleryProductId) return;
+  addToCart(galleryProductId, document.getElementById('galleryAddBtn'));
+});
+
+function openLogin(){
   document.getElementById('loginErr').classList.remove('show');
   document.getElementById('loginForm').reset();
   showOverlay('loginOverlay');
-});
+}
+document.getElementById('sbLogin').addEventListener('click', ()=>{ closeSidebar(); openLogin(); });
 
 document.getElementById('loginForm').addEventListener('submit', async e=>{
   e.preventDefault();
@@ -937,171 +926,171 @@ document.getElementById('loginForm').addEventListener('submit', async e=>{
   const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
   const { error } = await sb.auth.signInWithPassword({ email, password });
-  if(error){
-    errEl.textContent = '登入失敗：'+error.message;
-    errEl.classList.add('show');
-    return;
-  }
+  if(error){ errEl.textContent = '登入失敗：'+error.message; errEl.classList.add('show'); return; }
   hideOverlay('loginOverlay');
   await enterAdminMode();
 });
 
-document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+document.getElementById('sbLogout').addEventListener('click', async ()=>{
   await sb.auth.signOut();
   exitAdminMode();
+  closeSidebar();
 });
 
 async function enterAdminMode(){
   state.adminMode = true;
-  document.getElementById('adminToggleBtn').classList.add('active');
-  document.getElementById('adminToggleBtn').textContent = '管理中';
-  document.getElementById('adminBar').classList.add('show');
+  document.getElementById('adminPill').style.display = 'inline-block';
+  document.getElementById('sidebarAdmin').style.display = 'block';
+  document.getElementById('sidebarLogin').style.display = 'none';
   document.getElementById('cartFab').style.display = 'none';
   renderGrid();
 }
 function exitAdminMode(){
   state.adminMode = false;
-  document.getElementById('adminToggleBtn').classList.remove('active');
-  document.getElementById('adminToggleBtn').textContent = '管理模式';
-  document.getElementById('adminBar').classList.remove('show');
+  document.getElementById('adminPill').style.display = 'none';
+  document.getElementById('sidebarAdmin').style.display = 'none';
+  document.getElementById('sidebarLogin').style.display = 'block';
   document.getElementById('ordersPanel').classList.remove('show');
   document.getElementById('cartFab').style.display = '';
   renderGrid();
 }
 
-document.getElementById('editBrandBtn').addEventListener('click', async ()=>{
-  const nameEl = document.getElementById('brandName');
-  const tagEl = document.getElementById('brandTag');
-  const editing = nameEl.contentEditable === 'true';
-  nameEl.contentEditable = tagEl.contentEditable = !editing;
-  if(editing){
-    const brand_name = nameEl.textContent.trim();
-    const brand_tag = tagEl.textContent.trim();
-    const { error } = await sb.from('settings').update({ brand_name, brand_tag }).eq('id',1);
-    if(error){ setSyncNote('儲存店名失敗：'+error.message, true); }
-    else { state.settings.brand_name = brand_name; state.settings.brand_tag = brand_tag; setSyncNote(''); }
-    document.getElementById('editBrandBtn').textContent = '編輯店名/標語';
-  } else {
-    nameEl.focus();
-    document.getElementById('editBrandBtn').textContent = '完成編輯（點一下儲存）';
-  }
-});
-
-document.getElementById('toggleOrdersBtn').addEventListener('click', async ()=>{
-  const panel = document.getElementById('ordersPanel');
-  panel.classList.toggle('show');
-  if(panel.classList.contains('show')){ await loadOrders(); renderOrders(); }
-});
-document.getElementById('refreshOrdersBtn').addEventListener('click', async ()=>{
+document.getElementById('sbAddProduct').addEventListener('click', ()=>{ closeSidebar(); openProductModal(null); });
+document.getElementById('sbOrders').addEventListener('click', async ()=>{
+  closeSidebar();
+  document.getElementById('ordersPanel').classList.add('show');
   await loadOrders(); renderOrders();
+  document.getElementById('ordersPanel').scrollIntoView({behavior:'smooth'});
+});
+document.getElementById('closeOrdersBtn').addEventListener('click', ()=>{ document.getElementById('ordersPanel').classList.remove('show'); });
+document.getElementById('refreshOrdersBtn').addEventListener('click', async ()=>{ await loadOrders(); renderOrders(); });
+document.getElementById('sbSettings').addEventListener('click', ()=>{ closeSidebar(); openSettingsModal(); });
+
+function openSettingsModal(){
+  document.getElementById('setBrandName').value = state.settings.brand_name || '';
+  document.getElementById('setBrandTag').value = state.settings.brand_tag || '';
+  if(state.settings.banner_url){
+    document.getElementById('bannerPreviewImg').src = state.settings.banner_url;
+    document.getElementById('bannerPreviewWrap').classList.add('show');
+    document.getElementById('removeBannerBtn').style.display = 'inline';
+  } else {
+    document.getElementById('bannerPreviewWrap').classList.remove('show');
+    document.getElementById('removeBannerBtn').style.display = 'none';
+  }
+  document.getElementById('bannerStatus').textContent = '';
+  renderCatChips(); renderColorChips(); renderSizeChips();
+  document.getElementById('orderMsgInput').value = state.settings.order_form_message || '';
+  renderCustomFieldsList(); resetNewFieldForm();
+  showOverlay('settingsOverlay');
+}
+
+document.getElementById('saveBrandBtn').addEventListener('click', async ()=>{
+  const brand_name = document.getElementById('setBrandName').value.trim();
+  const brand_tag = document.getElementById('setBrandTag').value.trim();
+  const { error } = await sb.from('settings').update({ brand_name, brand_tag }).eq('id',1);
+  if(error){ alert('儲存失敗：'+error.message); return; }
+  state.settings.brand_name = brand_name; state.settings.brand_tag = brand_tag;
+  renderBrand();
+  alert('已儲存');
 });
 
-/* ---------- category edit ---------- */
-document.getElementById('editCatBtn').addEventListener('click', ()=>{
-  renderCatChips();
-  showOverlay('catOverlay');
+document.getElementById('bannerFile').addEventListener('change', async e=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const statusEl = document.getElementById('bannerStatus');
+  statusEl.textContent = '上傳中...';
+  try{
+    const url = await uploadProductImage(file, 'banner');
+    const { error } = await sb.from('settings').update({ banner_url: url }).eq('id',1);
+    if(error) throw error;
+    state.settings.banner_url = url;
+    document.getElementById('bannerPreviewImg').src = url;
+    document.getElementById('bannerPreviewWrap').classList.add('show');
+    document.getElementById('removeBannerBtn').style.display = 'inline';
+    statusEl.textContent = '已更新 ✓';
+    renderBrand();
+  }catch(err){
+    statusEl.textContent = '上傳失敗：'+err.message;
+  }
+  e.target.value='';
 });
+document.getElementById('removeBannerBtn').addEventListener('click', async ()=>{
+  const { error } = await sb.from('settings').update({ banner_url: '' }).eq('id',1);
+  if(error){ alert('移除失敗：'+error.message); return; }
+  state.settings.banner_url = '';
+  document.getElementById('bannerPreviewWrap').classList.remove('show');
+  document.getElementById('removeBannerBtn').style.display = 'none';
+  renderBrand();
+});
+
 function renderCatChips(){
   const wrap = document.getElementById('catChips');
-  wrap.innerHTML = (state.settings.categories||[]).map((c,i) =>
-    `<span>${escHtml(c)} <b data-cat-del="${i}">✕</b></span>`
-  ).join('');
+  wrap.innerHTML = (state.settings.categories||[]).map((c,i) => `<span>${escHtml(c)} <b data-cat-del="${i}">✕</b></span>`).join('');
   wrap.querySelectorAll('[data-cat-del]').forEach(b=>{
     b.addEventListener('click', async ()=>{
       state.settings.categories.splice(Number(b.dataset.catDel),1);
-      await saveCategoriesToCloud();
-      renderCatChips(); renderFilters(); renderCategoryOptions();
+      await sb.from('settings').update({ categories: state.settings.categories }).eq('id',1);
+      renderCatChips(); renderFilters();
     });
   });
 }
-async function saveCategoriesToCloud(){
-  const { error } = await sb.from('settings').update({ categories: state.settings.categories }).eq('id',1);
-  if(error) setSyncNote('儲存分類失敗：'+error.message, true); else setSyncNote('');
-}
 document.getElementById('catInput').addEventListener('keydown', async e=>{
-  if(e.key === 'Enter'){
+  if(e.key==='Enter'){
     e.preventDefault();
     const v = e.target.value.trim();
     if(v && !state.settings.categories.includes(v)){
       state.settings.categories.push(v);
-      await saveCategoriesToCloud();
-      renderCatChips(); renderFilters(); renderCategoryOptions();
+      await sb.from('settings').update({ categories: state.settings.categories }).eq('id',1);
+      renderCatChips(); renderFilters();
     }
-    e.target.value = '';
+    e.target.value='';
   }
-});
-
-/* ---------- colors / sizes preset list management ---------- */
-document.getElementById('editColorSizeBtn').addEventListener('click', ()=>{
-  renderColorChips(); renderSizeChips();
-  showOverlay('colorSizeOverlay');
-});
-document.getElementById('openColorSizeManage1').addEventListener('click', ()=>{
-  renderColorChips(); renderSizeChips();
-  showOverlay('colorSizeOverlay');
 });
 function renderColorChips(){
   const wrap = document.getElementById('colorChips');
-  wrap.innerHTML = (state.settings.colors||[]).map((c,i) =>
-    `<span>${escHtml(c)} <b data-color-del="${i}">✕</b></span>`
-  ).join('');
+  wrap.innerHTML = (state.settings.colors||[]).map((c,i) => `<span>${escHtml(c)} <b data-color-del="${i}">✕</b></span>`).join('');
   wrap.querySelectorAll('[data-color-del]').forEach(b=>{
     b.addEventListener('click', async ()=>{
       state.settings.colors.splice(Number(b.dataset.colorDel),1);
-      await saveColorsSizesToCloud();
-      renderColorChips(); renderProductFormChecks();
+      await sb.from('settings').update({ colors: state.settings.colors }).eq('id',1);
+      renderColorChips();
     });
   });
-}
-function renderSizeChips(){
-  const wrap = document.getElementById('sizeChips');
-  wrap.innerHTML = (state.settings.sizes||[]).map((s,i) =>
-    `<span>${escHtml(s)} <b data-size-del="${i}">✕</b></span>`
-  ).join('');
-  wrap.querySelectorAll('[data-size-del]').forEach(b=>{
-    b.addEventListener('click', async ()=>{
-      state.settings.sizes.splice(Number(b.dataset.sizeDel),1);
-      await saveColorsSizesToCloud();
-      renderSizeChips(); renderProductFormChecks();
-    });
-  });
-}
-async function saveColorsSizesToCloud(){
-  const { error } = await sb.from('settings').update({ colors: state.settings.colors, sizes: state.settings.sizes }).eq('id',1);
-  if(error) setSyncNote('儲存顏色/尺寸清單失敗：'+error.message, true); else setSyncNote('');
 }
 document.getElementById('colorInput').addEventListener('keydown', async e=>{
-  if(e.key === 'Enter'){
+  if(e.key==='Enter'){
     e.preventDefault();
     const v = e.target.value.trim();
     if(v && !state.settings.colors.includes(v)){
       state.settings.colors.push(v);
-      await saveColorsSizesToCloud();
-      renderColorChips(); renderProductFormChecks();
+      await sb.from('settings').update({ colors: state.settings.colors }).eq('id',1);
+      renderColorChips();
     }
-    e.target.value = '';
+    e.target.value='';
   }
 });
+function renderSizeChips(){
+  const wrap = document.getElementById('sizeChips');
+  wrap.innerHTML = (state.settings.sizes||[]).map((s,i) => `<span>${escHtml(s)} <b data-size-del="${i}">✕</b></span>`).join('');
+  wrap.querySelectorAll('[data-size-del]').forEach(b=>{
+    b.addEventListener('click', async ()=>{
+      state.settings.sizes.splice(Number(b.dataset.sizeDel),1);
+      await sb.from('settings').update({ sizes: state.settings.sizes }).eq('id',1);
+      renderSizeChips();
+    });
+  });
+}
 document.getElementById('sizeInput').addEventListener('keydown', async e=>{
-  if(e.key === 'Enter'){
+  if(e.key==='Enter'){
     e.preventDefault();
     const v = e.target.value.trim();
     if(v && !state.settings.sizes.includes(v)){
       state.settings.sizes.push(v);
-      await saveColorsSizesToCloud();
-      renderSizeChips(); renderProductFormChecks();
+      await sb.from('settings').update({ sizes: state.settings.sizes }).eq('id',1);
+      renderSizeChips();
     }
-    e.target.value = '';
+    e.target.value='';
   }
-});
-
-/* ---------- order form editor (message + custom fields) ---------- */
-let newFieldOptions = [];
-document.getElementById('editOrderFormBtn').addEventListener('click', ()=>{
-  document.getElementById('orderMsgInput').value = state.settings.order_form_message || '';
-  renderCustomFieldsList();
-  resetNewFieldForm();
-  showOverlay('orderFormOverlay');
 });
 
 document.getElementById('saveOrderMsgBtn').addEventListener('click', async ()=>{
@@ -1111,14 +1100,10 @@ document.getElementById('saveOrderMsgBtn').addEventListener('click', async ()=>{
   state.settings.order_form_message = msg;
   alert('已儲存');
 });
-
 function renderCustomFieldsList(){
   const wrap = document.getElementById('customFieldsList');
   const fields = state.settings.custom_fields || [];
-  if(fields.length === 0){
-    wrap.innerHTML = `<span style="font-size:12px; color:var(--ink-soft);">目前還沒有自訂欄位</span>`;
-    return;
-  }
+  if(fields.length === 0){ wrap.innerHTML = `<span style="font-size:12px; color:var(--ink-soft);">目前還沒有自訂欄位</span>`; return; }
   wrap.innerHTML = fields.map(f => `
     <div style="display:flex; justify-content:space-between; align-items:center; border:1px solid var(--line); padding:8px 10px; font-size:12px;">
       <span>${escHtml(f.label)}　<span style="color:var(--ink-soft);">${f.type==='select' ? '下拉選單：'+(f.options||[]).join('、') : '文字輸入'}${f.required ? '・必填' : '・選填'}</span></span>
@@ -1128,12 +1113,12 @@ function renderCustomFieldsList(){
   wrap.querySelectorAll('[data-field-del]').forEach(b=>{
     b.addEventListener('click', async ()=>{
       state.settings.custom_fields = state.settings.custom_fields.filter(f=>f.id!==b.dataset.fieldDel);
-      await saveCustomFieldsToCloud();
+      await sb.from('settings').update({ custom_fields: state.settings.custom_fields }).eq('id',1);
       renderCustomFieldsList();
     });
   });
 }
-
+let newFieldOptions = [];
 function resetNewFieldForm(){
   document.getElementById('newFieldLabel').value = '';
   document.getElementById('newFieldType').value = 'text';
@@ -1142,11 +1127,9 @@ function resetNewFieldForm(){
   newFieldOptions = [];
   renderNewFieldOptionChips();
 }
-
-document.getElementById('newFieldType').addEventListener('change', (e)=>{
-  document.getElementById('newFieldOptionsWrap').style.display = e.target.value === 'select' ? 'block' : 'none';
+document.getElementById('newFieldType').addEventListener('change', e=>{
+  document.getElementById('newFieldOptionsWrap').style.display = e.target.value==='select' ? 'block' : 'none';
 });
-
 function renderNewFieldOptionChips(){
   const wrap = document.getElementById('newFieldOptionChips');
   wrap.innerHTML = newFieldOptions.map((o,i) => `<span>${escHtml(o)} <b data-newopt-del="${i}">✕</b></span>`).join('');
@@ -1155,159 +1138,173 @@ function renderNewFieldOptionChips(){
   });
 }
 document.getElementById('newFieldOptionInput').addEventListener('keydown', e=>{
-  if(e.key === 'Enter'){
+  if(e.key==='Enter'){
     e.preventDefault();
     const v = e.target.value.trim();
     if(v){ newFieldOptions.push(v); renderNewFieldOptionChips(); }
-    e.target.value = '';
+    e.target.value='';
   }
 });
-
-async function saveCustomFieldsToCloud(){
-  const { error } = await sb.from('settings').update({ custom_fields: state.settings.custom_fields }).eq('id',1);
-  if(error) alert('儲存欄位失敗：'+error.message);
-}
-
 document.getElementById('addCustomFieldBtn').addEventListener('click', async ()=>{
   const label = document.getElementById('newFieldLabel').value.trim();
   const type = document.getElementById('newFieldType').value;
   const required = document.getElementById('newFieldRequired').checked;
   if(!label){ alert('請輸入欄位名稱'); return; }
-  if(type === 'select' && newFieldOptions.length === 0){ alert('下拉選單請至少新增一個選項'); return; }
+  if(type==='select' && newFieldOptions.length===0){ alert('下拉選單請至少新增一個選項'); return; }
   const field = { id: cryptoId(), label, type, required, options: type==='select' ? [...newFieldOptions] : [] };
   state.settings.custom_fields = [...(state.settings.custom_fields||[]), field];
-  await saveCustomFieldsToCloud();
-  renderCustomFieldsList();
-  resetNewFieldForm();
+  await sb.from('settings').update({ custom_fields: state.settings.custom_fields }).eq('id',1);
+  renderCustomFieldsList(); resetNewFieldForm();
 });
 
-/* ---------- product modal: color/size checkboxes ---------- */
-let selectedColors = [];
-let selectedSizes = [];
-function renderCategoryOptions(){
-  const sel = document.getElementById('pCategory');
-  sel.innerHTML = (state.settings.categories||[]).map(c => `<option value="${escAttr(c)}">${escHtml(c)}</option>`).join('');
+document.addEventListener('change', async (e)=>{
+  const sel = e.target;
+  if(sel.tagName !== 'SELECT' || !sel.dataset.settingsKey) return;
+  if(sel.value !== '__add_new__') return;
+  const key = sel.dataset.settingsKey;
+  const v = prompt('請輸入新的選項內容：');
+  if(v && v.trim()){
+    const val = v.trim();
+    if(!state.settings[key]) state.settings[key] = [];
+    if(!state.settings[key].includes(val)) state.settings[key].push(val);
+    const { error } = await sb.from('settings').update({ [key]: state.settings[key] }).eq('id',1);
+    if(error){ alert('新增失敗：'+error.message); }
+    document.querySelectorAll(`select[data-settings-key="${key}"]`).forEach(s=>{
+      const keepBlank = s.querySelector('option[value=""]');
+      s.innerHTML = (keepBlank ? keepBlank.outerHTML : '') + optionsWithAdd(state.settings[key]);
+      s.value = val;
+    });
+    if(key==='categories') renderFilters();
+    if(key==='colors' && document.getElementById('colorChips')) renderColorChips();
+    if(key==='sizes' && document.getElementById('sizeChips')) renderSizeChips();
+  } else {
+    const fallback = sel.querySelector('option:not([value="__add_new__"])');
+    sel.value = fallback ? fallback.value : '';
+  }
+});
+function optionsWithAdd(arr){
+  return (arr||[]).map(v => `<option value="${escAttr(v)}">${escHtml(v)}</option>`).join('') + `<option value="__add_new__">+ 新增選項...</option>`;
 }
-function renderProductFormChecks(){
-  const colorWrap = document.getElementById('pColorChecks');
-  colorWrap.innerHTML = (state.settings.colors||[]).map(c => `
-    <label><input type="checkbox" value="${escAttr(c)}" ${selectedColors.includes(c)?'checked':''} data-color-check>${escHtml(c)}</label>
-  `).join('') || `<span style="font-size:11px; color:var(--ink-soft);">還沒有顏色清單，先去「管理顏色/尺寸清單」新增</span>`;
-  const sizeWrap = document.getElementById('pSizeChecks');
-  sizeWrap.innerHTML = (state.settings.sizes||[]).map(s => `
-    <label><input type="checkbox" value="${escAttr(s)}" ${selectedSizes.includes(s)?'checked':''} data-size-check>${escHtml(s)}</label>
-  `).join('') || `<span style="font-size:11px; color:var(--ink-soft);">還沒有尺寸清單，先去「管理顏色/尺寸清單」新增</span>`;
-  colorWrap.querySelectorAll('[data-color-check]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      selectedColors = [...colorWrap.querySelectorAll('[data-color-check]:checked')].map(x=>x.value);
-      renderImageGallery();
-    });
-  });
-  sizeWrap.querySelectorAll('[data-size-check]').forEach(cb=>{
-    cb.addEventListener('change', ()=>{
-      selectedSizes = [...sizeWrap.querySelectorAll('[data-size-check]:checked')].map(x=>x.value);
-    });
-  });
+function renderCategoryOptions(){ document.getElementById('pCategory').innerHTML = optionsWithAdd(state.settings.categories); }
+function renderVariantColorSizeOptions(){
+  document.getElementById('vColor').innerHTML = '<option value="">（不分顏色）</option>' + optionsWithAdd(state.settings.colors);
+  document.getElementById('vSize').innerHTML = '<option value="">（不分尺寸）</option>' + optionsWithAdd(state.settings.sizes);
 }
 
-document.getElementById('addProductBtn').addEventListener('click', ()=> openProductModal(null));
-
-/* ---------- photo / video upload ---------- */
-async function uploadProductImage(file){
+async function uploadProductImage(file, folder){
   const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
-  const path = `products/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
+  const path = `${folder||'products'}/${Date.now()}_${Math.random().toString(36).slice(2,8)}.${ext}`;
   const { error } = await sb.storage.from('product-images').upload(path, file, { cacheControl:'3600', upsert:false });
   if(error) throw error;
   const { data } = sb.storage.from('product-images').getPublicUrl(path);
   return data.publicUrl;
 }
 
-let currentImages = []; // [{url, color}]
+let currentImages = [];
 let currentVideoUrl = '';
+let currentVariants = [];
 
 function renderImageGallery(){
   const wrap = document.getElementById('pImageGallery');
+  const colorOpts = [...new Set(currentVariants.map(v=>v.color).filter(Boolean))];
   wrap.innerHTML = currentImages.map((img,i) => `
     <div class="gallery-thumb-item">
       <img src="${escAttr(img.url)}">
       ${i===0 ? '<span class="cover-badge">封面</span>' : ''}
       <button type="button" class="thumb-del" data-img-del="${i}">✕</button>
-      ${selectedColors.length ? `
+      ${colorOpts.length ? `
         <select class="thumb-color-tag" data-img-color="${i}">
           <option value="">通用（不分顏色）</option>
-          ${selectedColors.map(c => `<option value="${escAttr(c)}" ${img.color===c?'selected':''}>${escHtml(c)}</option>`).join('')}
-        </select>
-      ` : ''}
+          ${colorOpts.map(c => `<option value="${escAttr(c)}" ${img.color===c?'selected':''}>${escHtml(c)}</option>`).join('')}
+        </select>` : ''}
     </div>
   `).join('');
   wrap.querySelectorAll('[data-img-del]').forEach(b=>{
-    b.addEventListener('click', ()=>{
-      currentImages.splice(Number(b.dataset.imgDel),1);
-      renderImageGallery();
-    });
+    b.addEventListener('click', ()=>{ currentImages.splice(Number(b.dataset.imgDel),1); renderImageGallery(); });
   });
   wrap.querySelectorAll('[data-img-color]').forEach(sel=>{
-    sel.addEventListener('change', ()=>{
-      currentImages[Number(sel.dataset.imgColor)].color = sel.value;
-    });
+    sel.addEventListener('change', ()=>{ currentImages[Number(sel.dataset.imgColor)].color = sel.value; });
   });
 }
-
-document.getElementById('pImageFiles').addEventListener('change', async (e)=>{
-  const files = Array.from(e.target.files || []);
+document.getElementById('pImageFiles').addEventListener('change', async e=>{
+  const files = Array.from(e.target.files||[]);
   if(!files.length) return;
   const statusEl = document.getElementById('pImageUploadStatus');
   for(const file of files){
-    statusEl.textContent = `上傳中（${file.name}）...`;
-    statusEl.style.color = 'var(--ink-soft)';
+    statusEl.textContent = `上傳中（${file.name}）...`; statusEl.style.color='var(--ink-soft)';
     try{
-      const url = await uploadProductImage(file);
+      const url = await uploadProductImage(file, 'products');
       currentImages.push({ url, color:'' });
       renderImageGallery();
     }catch(err){
-      statusEl.textContent = '上傳失敗：'+err.message;
-      statusEl.style.color = 'var(--danger)';
+      statusEl.textContent = '上傳失敗：'+err.message; statusEl.style.color='var(--danger)';
       return;
     }
   }
-  statusEl.textContent = `已上傳，共 ${currentImages.length} 張照片 ✓`;
-  statusEl.style.color = 'var(--sage-deep)';
-  e.target.value = '';
+  statusEl.textContent = `已上傳，共 ${currentImages.length} 張照片 ✓`; statusEl.style.color='var(--sage-deep)';
+  e.target.value='';
 });
-
-document.getElementById('pVideoFile').addEventListener('change', async (e)=>{
+document.getElementById('pVideoFile').addEventListener('change', async e=>{
   const file = e.target.files[0];
   if(!file) return;
   const statusEl = document.getElementById('pVideoUploadStatus');
-  statusEl.textContent = '上傳中...';
-  statusEl.style.color = 'var(--ink-soft)';
+  statusEl.textContent = '上傳中...'; statusEl.style.color='var(--ink-soft)';
   try{
-    const url = await uploadProductImage(file);
+    const url = await uploadProductImage(file, 'products');
     currentVideoUrl = url;
     document.getElementById('pVideoPreview').src = url;
     document.getElementById('pVideoPreviewWrap').style.display = 'block';
-    statusEl.textContent = '上傳完成 ✓';
-    statusEl.style.color = 'var(--sage-deep)';
+    statusEl.textContent = '上傳完成 ✓'; statusEl.style.color='var(--sage-deep)';
   }catch(err){
-    statusEl.textContent = '上傳失敗：'+err.message;
-    statusEl.style.color = 'var(--danger)';
+    statusEl.textContent = '上傳失敗：'+err.message; statusEl.style.color='var(--danger)';
   }
-  e.target.value = '';
+  e.target.value='';
 });
-
 document.getElementById('removeVideoBtn').addEventListener('click', ()=>{
   currentVideoUrl = '';
   document.getElementById('pVideoPreviewWrap').style.display = 'none';
   document.getElementById('pVideoUploadStatus').textContent = '';
 });
 
+function renderVariantList(){
+  const wrap = document.getElementById('variantList');
+  if(currentVariants.length === 0){ wrap.innerHTML = `<div style="font-size:12px; color:var(--ink-soft);">還沒有新增任何規格</div>`; return; }
+  wrap.innerHTML = '<table class="variant-table"><thead><tr><th>顏色</th><th>尺寸</th><th>庫存</th><th></th></tr></thead><tbody>' +
+    currentVariants.map((v,i) => `
+      <tr>
+        <td>${escHtml(v.color||'（不分顏色）')}</td>
+        <td>${escHtml(v.size||'（不分尺寸）')}</td>
+        <td><input type="number" min="0" value="${v.stock}" data-variant-stock="${i}"></td>
+        <td><button type="button" data-variant-del="${i}">刪除</button></td>
+      </tr>
+    `).join('') + '</tbody></table>';
+  wrap.querySelectorAll('[data-variant-stock]').forEach(inp=>{
+    inp.addEventListener('change', ()=>{ currentVariants[Number(inp.dataset.variantStock)].stock = Math.max(0, Number(inp.value)||0); });
+  });
+  wrap.querySelectorAll('[data-variant-del]').forEach(b=>{
+    b.addEventListener('click', ()=>{ currentVariants.splice(Number(b.dataset.variantDel),1); renderVariantList(); renderImageGallery(); });
+  });
+}
+document.getElementById('addVariantBtn').addEventListener('click', ()=>{
+  const color = document.getElementById('vColor').value;
+  const size = document.getElementById('vSize').value;
+  const stock = Math.max(0, Number(document.getElementById('vStock').value)||0);
+  if(currentVariants.some(v=>v.color===color && v.size===size)){
+    alert('這個顏色/尺寸組合已經存在了，請直接在下面列表調整數量');
+    return;
+  }
+  currentVariants.push({ id: cryptoId(), color, size, stock });
+  document.getElementById('vStock').value = '';
+  renderVariantList(); renderImageGallery();
+});
+
 function openProductModal(id){
   document.getElementById('productErr').classList.remove('show');
   renderCategoryOptions();
+  renderVariantColorSizeOptions();
   const form = document.getElementById('productForm');
   form.reset();
-  currentImages = [];
-  currentVideoUrl = '';
+  currentImages = []; currentVideoUrl = ''; currentVariants = [];
   document.getElementById('pImageUploadStatus').textContent = '';
   document.getElementById('pVideoPreviewWrap').style.display = 'none';
   document.getElementById('pVideoUploadStatus').textContent = '';
@@ -1319,7 +1316,6 @@ function openProductModal(id){
     document.getElementById('pName').value = p.name;
     document.getElementById('pPrice').value = p.price;
     document.getElementById('pCategory').value = p.category;
-    document.getElementById('pStockQty').value = p.stock_qty != null ? p.stock_qty : '';
     currentImages = [...galleryOf(p)];
     if(p.video_url){
       currentVideoUrl = p.video_url;
@@ -1328,18 +1324,22 @@ function openProductModal(id){
     }
     document.getElementById('pNote').value = p.note || '';
     document.getElementById('pSoldOut').checked = !!p.sold_out;
-    selectedColors = [...(p.colors||[])];
-    selectedSizes = [...(p.sizes||[])];
+    if(hasVariants(p)){
+      currentVariants = p.variants.map(v => ({ id:v.id||cryptoId(), color:v.color||'', size:v.size||'', stock:Number(v.stock)||0 }));
+    } else if((p.colors&&p.colors.length) || (p.sizes&&p.sizes.length) || p.stock_qty!=null){
+      const colors = (p.colors&&p.colors.length) ? p.colors : [''];
+      const sizes = (p.sizes&&p.sizes.length) ? p.sizes : [''];
+      colors.forEach(c=>{ sizes.forEach(s=>{
+        currentVariants.push({ id:cryptoId(), color:c, size:s, stock: p.stock_qty!=null ? p.stock_qty : 0 });
+      });});
+    }
     del.style.display = 'block';
   } else {
     document.getElementById('productModalTitle').textContent = '新增商品';
     document.getElementById('pId').value = '';
-    selectedColors = [];
-    selectedSizes = [];
     del.style.display = 'none';
   }
-  renderImageGallery();
-  renderProductFormChecks();
+  renderImageGallery(); renderVariantList();
   showOverlay('productOverlay');
 }
 
@@ -1353,7 +1353,8 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
     return;
   }
   const id = document.getElementById('pId').value;
-  const stockVal = document.getElementById('pStockQty').value;
+  const colors = [...new Set(currentVariants.map(v=>v.color).filter(Boolean))];
+  const sizes = [...new Set(currentVariants.map(v=>v.size).filter(Boolean))];
   const data = {
     name: document.getElementById('pName').value.trim(),
     price: Number(document.getElementById('pPrice').value),
@@ -1362,11 +1363,11 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
     images: currentImages.map(im => im.url),
     photo_gallery: currentImages,
     video_url: currentVideoUrl || null,
-    colors: selectedColors,
-    sizes: selectedSizes,
+    colors, sizes,
+    variants: currentVariants,
+    stock_qty: null,
     note: document.getElementById('pNote').value.trim(),
-    sold_out: document.getElementById('pSoldOut').checked,
-    stock_qty: stockVal === '' ? null : Math.max(0, Number(stockVal))
+    sold_out: document.getElementById('pSoldOut').checked
   };
   const { error } = id
     ? await sb.from('products').update(data).eq('id', id)
@@ -1392,19 +1393,12 @@ document.getElementById('deleteProductBtn').addEventListener('click', async ()=>
   }
 });
 
-/* ---------- orders admin table ---------- */
-function itemsSummary(order){
-  return order.items.map(it => `${it.productName}｜${it.variant} × ${it.qty}`).join('\n');
-}
-function orderTotal(order){
-  return order.items.reduce((s,it)=>s+it.price*it.qty,0);
-}
-
+function itemsSummary(order){ return order.items.map(it => `${it.productName}｜${it.variant} × ${it.qty}`).join('\n'); }
+function orderTotal(order){ return order.items.reduce((s,it)=>s+it.price*it.qty,0); }
 function customDataSummary(order){
   const cd = order.custom_data || {};
   return Object.entries(cd).filter(([k,v])=>v).map(([k,v])=>`${k}：${v}`).join('\n');
 }
-
 function renderOrders(){
   document.getElementById('orderCount').textContent = state.orders.length;
   document.getElementById('ordersBody').innerHTML = state.orders.map(o => `
@@ -1425,7 +1419,6 @@ function renderOrders(){
     });
   });
 }
-
 document.getElementById('clearOrdersBtn').addEventListener('click', async ()=>{
   if(confirm('確定要清空所有訂單登記嗎？此動作無法復原。')){
     const ids = state.orders.map(o=>o.id);
@@ -1436,7 +1429,6 @@ document.getElementById('clearOrdersBtn').addEventListener('click', async ()=>{
     await loadOrders(); renderOrders();
   }
 });
-
 document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
   const header = ['時間','姓名','電話','商品清單','小計','備註','其他資訊'];
   const rows = state.orders.map(o => [
@@ -1451,7 +1443,6 @@ document.getElementById('exportCsvBtn').addEventListener('click', ()=>{
   a.download = '訂單登記_'+new Date().toISOString().slice(0,10)+'.csv';
   a.click();
 });
-
 document.getElementById('exportLineBtn').addEventListener('click', ()=>{
   const text = state.orders.map(o =>
     `姓名：${o.customer_name}\n電話：${o.phone}\n${o.items.map(it=>`・${it.productName}｜${it.variant} x${it.qty}`).join('\n')}\n小計：NT$ ${orderTotal(o).toLocaleString()}${o.note ? '\n備註：'+o.note : ''}${customDataSummary(o) ? '\n'+customDataSummary(o) : ''}`
@@ -1463,28 +1454,19 @@ document.getElementById('exportLineBtn').addEventListener('click', ()=>{
   });
 });
 
-/* ---------- overlay helpers ---------- */
 function showOverlay(id){ document.getElementById(id).classList.add('show'); }
 function hideOverlay(id){ document.getElementById(id).classList.remove('show'); }
-document.querySelectorAll('[data-close]').forEach(el=>{
-  el.addEventListener('click', ()=> hideOverlay(el.dataset.close));
-});
-document.querySelectorAll('.overlay').forEach(ov=>{
-  ov.addEventListener('click', e=>{ if(e.target === ov) ov.classList.remove('show'); });
-});
+document.querySelectorAll('[data-close]').forEach(el=>{ el.addEventListener('click', ()=> hideOverlay(el.dataset.close)); });
+document.querySelectorAll('.overlay').forEach(ov=>{ ov.addEventListener('click', e=>{ if(e.target === ov) ov.classList.remove('show'); }); });
 
-/* ---------- init ---------- */
 async function init(){
   setSyncNote('讀取中...');
   await Promise.all([loadSettings(), loadProducts()]);
-  renderBrand();
-  renderFilters();
-  renderGrid();
-  updateCartBadge();
+  renderBrand(); renderFilters(); renderGrid(); updateCartBadge();
   setSyncNote('');
-
   const { data: { session } } = await sb.auth.getSession();
   if(session){ await enterAdminMode(); }
+  else { document.getElementById('sidebarLogin').style.display = 'block'; }
 }
 init();
 </script>
