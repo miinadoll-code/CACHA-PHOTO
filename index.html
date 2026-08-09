@@ -87,6 +87,9 @@
   .grid{max-width:1100px; margin:26px auto 100px; padding:0 16px; display:grid; gap:22px; grid-template-columns:repeat(auto-fill, minmax(210px,1fr));}
   .card{background:var(--card); border:1px solid var(--line); position:relative; display:flex; flex-direction:column;}
   .card img{width:100%; aspect-ratio:3/4; object-fit:cover; display:block; border-bottom:1px solid var(--line); background:#e4dfd3;}
+  .grid.sortable-active .img-wrap{
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none; touch-action:manipulation;
+  }
   .card img, .gallery-main img, .gallery-thumbs .g-thumb, .style-detail-photo{
     -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
   }
@@ -106,15 +109,6 @@
   .btn-register.added{background:var(--sage);}
   .btn-edit{padding:8px 10px; font-size:12px; background:#fff; border:1px solid var(--line); cursor:pointer;}
   .soldout-badge{position:absolute; top:10px; right:10px; background:var(--danger); color:#fff; font-size:10px; padding:3px 8px; letter-spacing:1px; z-index:2;}
-  .drag-handle{
-    position:absolute; top:4px; left:4px; z-index:3; width:30px; height:30px;
-    cursor:grab; touch-action:none; background:transparent;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .drag-handle::before{
-    content:""; display:block; width:16px; height:2px; border-radius:1px; background:rgba(255,255,255,0.75);
-    box-shadow: 0 -5px 0 rgba(255,255,255,0.75), 0 5px 0 rgba(255,255,255,0.75);
-  }
   .card.sortable-ghost{opacity:0.4;}
   .card.sortable-chosen{box-shadow:0 4px 14px rgba(0,0,0,0.25);}
   .empty{text-align:center; color:var(--ink-soft); padding:60px 20px; font-size:13px;}
@@ -251,8 +245,6 @@
     .variant-add-row select, .variant-add-row input{font-size:16px;}
     .announcement{font-size:10.5px; padding:5px 10px; max-width:90vw; overflow-wrap:break-word;}
     .checks label{font-size:11px; padding:4px 8px;}
-    .drag-handle{width:26px; height:26px;}
-    .drag-handle::before{width:14px;}
   }
 </style>
 </head>
@@ -672,7 +664,6 @@ function renderGrid(){
     const stockLabel = hasVariants(p) ? ('規格庫存合計 '+totalStock(p)+' 件') : (p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存');
     return `
     <div class="card" data-product-id="${p.id}">
-      ${state.adminMode && state.activeCategory==='全部' ? '<div class="drag-handle" title="長按拖曳排序"></div>' : ''}
       ${soldOut ? '<span class="soldout-badge">已售完</span>' : ''}
       <div class="img-wrap" data-open-gallery="${p.id}">
         <img src="${escAttr(coverImage(p, colors[0]))}" alt="${escAttr(p.name)}" loading="lazy" draggable="false" oncontextmenu="return false" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
@@ -701,12 +692,19 @@ function renderGrid(){
 let gridSortableInstance = null;
 function initGridSortable(){
   if(gridSortableInstance){ gridSortableInstance.destroy(); gridSortableInstance = null; }
-  if(!state.adminMode || state.activeCategory !== '全部' || typeof Sortable === 'undefined') return;
   const gridEl = document.getElementById('grid');
+  if(!state.adminMode || state.activeCategory !== '全部' || typeof Sortable === 'undefined'){
+    gridEl.classList.remove('sortable-active');
+    return;
+  }
+  gridEl.classList.add('sortable-active');
   gridSortableInstance = Sortable.create(gridEl, {
-    handle: '.drag-handle',
-    delay: 300,
+    handle: '.img-wrap',
+    filter: 'select, input, button',
+    preventOnFilter: true,
+    delay: 350,
     delayOnTouchOnly: true,
+    touchStartThreshold: 8,
     animation: 150,
     onEnd: async function(){
       const ids = [...gridEl.querySelectorAll('[data-product-id]')].map(el => el.dataset.productId);
