@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 <style>
   :root{
     --paper:#ECE6D9;
@@ -46,8 +47,9 @@
   .banner-wrap.show{display:block;}
   .banner-wrap img{width:100%; height:150px; object-fit:cover; display:block;}
   .header-brand{text-align:center; padding:18px 16px 0;}
-  .brand-name{font-size:26px; font-weight:700; letter-spacing:2px; margin:0 0 4px;}
+  .brand-name{font-family:'Noto Sans TC', sans-serif; font-size:26px; font-weight:700; letter-spacing:4px; margin:0 0 4px;}
   .brand-tag{font-size:12px; color:var(--ink-soft); letter-spacing:3px; text-transform:uppercase;}
+  .announcement{font-size:12px; color:var(--clay); margin-top:8px; padding:6px 14px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); display:inline-block;}
   .sync-note{font-size:10px; color:var(--ink-soft); margin-top:6px; text-align:center;}
   .sync-note.err{color:var(--danger);}
 
@@ -80,13 +82,16 @@
   .grid{max-width:1100px; margin:26px auto 100px; padding:0 16px; display:grid; gap:22px; grid-template-columns:repeat(auto-fill, minmax(210px,1fr));}
   .card{background:var(--card); border:1px solid var(--line); position:relative; display:flex; flex-direction:column;}
   .card img{width:100%; aspect-ratio:3/4; object-fit:cover; display:block; border-bottom:1px solid var(--line); background:#e4dfd3;}
+  .card img, .gallery-main img, .gallery-thumbs .g-thumb, .style-detail-photo{
+    -webkit-user-select:none; user-select:none; -webkit-touch-callout:none;
+  }
   .card .info{padding:12px 14px 14px; display:flex; flex-direction:column; gap:6px; flex:1;}
   .card .note{font-size:11px; color:var(--clay); letter-spacing:1px;}
   .card .name{font-size:14px; font-weight:500; line-height:1.5;}
   .card .price{font-size:15px; font-weight:700; font-family:'Noto Serif TC',serif;}
-  .card .pick-row{display:flex; gap:6px; margin-top:2px;}
-  .card .pick-row select{flex:1.4; font-size:12px; padding:6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
-  .card .pick-row input{width:52px; font-size:12px; padding:6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
+  .card .pick-row{display:flex; gap:6px; margin-top:4px;}
+  .card .pick-row select{flex:1.4; font-size:14px; padding:9px 7px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5; font-weight:500;}
+  .card .pick-row input{width:56px; font-size:14px; padding:9px 6px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
   .card .actions{margin-top:auto; display:flex; gap:6px; padding-top:8px; flex-wrap:wrap;}
   .btn-register{flex:1; padding:8px 10px; font-size:12px; letter-spacing:1px; background:var(--ink); color:#fff; border:none; cursor:pointer; border-radius:var(--radius);}
   .btn-register:hover{background:var(--sage-deep);}
@@ -94,6 +99,13 @@
   .btn-register.added{background:var(--sage);}
   .btn-edit{padding:8px 10px; font-size:12px; background:#fff; border:1px solid var(--line); cursor:pointer;}
   .soldout-badge{position:absolute; top:10px; right:10px; background:var(--danger); color:#fff; font-size:10px; padding:3px 8px; letter-spacing:1px; z-index:2;}
+  .drag-handle{
+    position:absolute; top:8px; left:8px; z-index:3; width:38px; height:38px; border-radius:50%;
+    background:rgba(51,47,40,0.8); color:#fff; display:flex; align-items:center; justify-content:center;
+    font-size:15px; letter-spacing:-1px; cursor:grab; touch-action:none;
+  }
+  .card.sortable-ghost{opacity:0.4;}
+  .card.sortable-chosen{box-shadow:0 4px 14px rgba(0,0,0,0.25);}
   .empty{text-align:center; color:var(--ink-soft); padding:60px 20px; font-size:13px;}
 
   .btn-quicksoldout{padding:8px 6px; font-size:11px; background:#fff; border:1px solid var(--line); cursor:pointer; white-space:nowrap;}
@@ -124,7 +136,12 @@
   .modal.wide{max-width:600px;}
   .modal h3{margin:0 0 4px;}
   .modal .sub{font-size:12px; color:var(--ink-soft); margin-bottom:16px;}
-  .modal .close{position:absolute; top:14px; right:14px; background:none; border:none; font-size:18px; cursor:pointer; color:var(--ink-soft);}
+  .modal .close{
+    position:absolute; top:12px; right:12px; background:var(--paper); border:1px solid var(--line);
+    width:32px; height:32px; border-radius:50%; font-size:17px; font-weight:700; cursor:pointer; color:var(--ink);
+    display:flex; align-items:center; justify-content:center; line-height:1;
+  }
+  .modal .close:hover{background:var(--ink); color:#fff; border-color:var(--ink);}
   .field{margin-bottom:12px;}
   .field label{display:block; font-size:12px; color:var(--ink-soft); margin-bottom:4px;}
   .field input, .field select, .field textarea{width:100%; padding:9px 10px; border:1px solid var(--line); font-size:14px; font-family:inherit; border-radius:var(--radius); background:#FCFAF5;}
@@ -159,6 +176,14 @@
   .settings-section:first-of-type{border-top:none; padding-top:0; margin-top:0;}
   .settings-section h4{margin:0 0 10px; font-size:13px; color:var(--sage-deep);}
 
+  .checks{display:flex; flex-wrap:wrap; gap:6px; margin-top:4px;}
+  .checks label{
+    display:flex; align-items:center; gap:4px; font-size:12px;
+    border:1px solid var(--line); padding:5px 10px; border-radius:14px;
+    cursor:pointer; background:#FCFAF5; user-select:none;
+  }
+  .checks label:has(input:checked), .checks label.is-checked{background:var(--sage); border-color:var(--sage); color:#fff;}
+  .checks input{width:auto; margin:0;}
   .variant-add-row{display:flex; gap:6px; flex-wrap:wrap; align-items:flex-end; margin-bottom:10px;}
   .variant-add-row select, .variant-add-row input{padding:8px; font-size:13px; border:1px solid var(--line); border-radius:var(--radius); background:#FCFAF5;}
   .variant-add-row select{flex:1.3; min-width:90px;}
@@ -213,6 +238,9 @@
     .submit-btn{padding:11px; font-size:14px;}
     .orders-table{font-size:10.5px;}
     .variant-add-row select, .variant-add-row input{font-size:16px;}
+    .announcement{font-size:10.5px; padding:5px 10px; max-width:90vw; overflow-wrap:break-word;}
+    .checks label{font-size:11px; padding:4px 8px;}
+    .drag-handle{width:34px; height:34px; font-size:13px;}
   }
 </style>
 </head>
@@ -235,6 +263,7 @@
   <div class="header-brand">
     <h1 class="brand-name" id="brandName">妳的品牌名稱</h1>
     <div class="brand-tag" id="brandTag">日系空氣感選品 · 手動更新中</div>
+    <div class="announcement" id="announcementBar" style="display:none;"></div>
     <div class="sync-note" id="syncNote"></div>
   </div>
 </header>
@@ -242,7 +271,7 @@
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 <div class="sidebar" id="sidebar">
   <div class="sidebar-head"><b id="sidebarBrand">選單</b><button class="sidebar-close" id="sidebarClose">✕</button></div>
-  <button class="sidebar-item" data-nav-home>🏠 首頁</button>
+  <button class="sidebar-item" data-nav-home>首頁</button>
   <div class="sidebar-section-title">商品分類</div>
   <div id="sidebarCategories"></div>
   <div class="sidebar-admin" id="sidebarAdmin" style="display:none;">
@@ -336,7 +365,10 @@
         <div class="field"><label>商品名稱 *</label><input type="text" id="pName" required></div>
         <div class="field"><label>價格 (NT$) *</label><input type="number" id="pPrice" required></div>
       </div>
-      <div class="field"><label>分類</label><select id="pCategory" data-settings-key="categories"></select></div>
+      <div class="field"><label>分類（可複選）</label>
+        <div class="checks" id="pCategoryChecks"></div>
+        <span class="manage-link" style="font-size:11px; color:var(--sage-deep); cursor:pointer; text-decoration:underline;" data-open-cat-add>+ 新增分類選項</span>
+      </div>
       <div class="field">
         <label>商品照片（可一次選多張，第一張是封面）*</label>
         <input type="file" id="pImageFiles" accept="image/*" multiple>
@@ -382,6 +414,7 @@
         <div class="field"><label>店名</label><input type="text" id="setBrandName"></div>
         <div class="field"><label>標語</label><input type="text" id="setBrandTag"></div>
       </div>
+      <div class="field"><label>近期活動資訊（選填，顯示在標語下方）</label><input type="text" id="setAnnouncement" placeholder="例如：8/15 前全館滿千折百"></div>
       <button type="button" class="submit-btn" id="saveBrandBtn">儲存店名/標語</button>
     </div>
 
@@ -457,7 +490,7 @@
 </div>
 
 <script>
-const SUPABASE_URL = ' https://lvazkqgnzdlolqbqooci.supabase.co';
+const SUPABASE_URL = 'https://lvazkqgnzdlolqbqooci.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2YXprcWduemRsb2xxYnFvb2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMDc3MDksImV4cCI6MjEwMTc4MzcwOX0.F2HQlujLQJKOJPANUjuKzRFhTNHo1lQu2gsSBSUqXNM';
 
 if(SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'){
@@ -472,7 +505,7 @@ let state = {
   products: [],
   orders: [],
   settings: {
-    brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', banner_url:'',
+    brand_name:'妳的品牌名稱', brand_tag:'日系空氣感選品 · 手動更新中', announcement:'', banner_url:'',
     categories:['上衣','下身','洋裝','外套','配件'], colors:['黑色','白色','米色','卡其'], sizes:['均碼','S','M','L','XL'],
     order_form_message:'', custom_fields:[]
   },
@@ -498,7 +531,7 @@ async function loadSettings(){
   state.settings = data;
 }
 async function loadProducts(){
-  const { data, error } = await sb.from('products').select('*').order('created_at', {ascending:true});
+  const { data, error } = await sb.from('products').select('*').order('sort_order', {ascending:true}).order('created_at', {ascending:true});
   if(error){ setSyncNote('讀取商品失敗：'+error.message, true); return; }
   state.products = data;
 }
@@ -556,6 +589,13 @@ function renderBrand(){
   document.getElementById('brandName').textContent = state.settings.brand_name;
   document.getElementById('brandTag').textContent = state.settings.brand_tag;
   document.getElementById('sidebarBrand').textContent = state.settings.brand_name;
+  const annEl = document.getElementById('announcementBar');
+  if(state.settings.announcement && state.settings.announcement.trim()){
+    annEl.textContent = state.settings.announcement.trim();
+    annEl.style.display = 'inline-block';
+  } else {
+    annEl.style.display = 'none';
+  }
   const bw = document.getElementById('bannerWrap');
   if(state.settings.banner_url){
     document.getElementById('bannerImg').src = state.settings.banner_url;
@@ -601,7 +641,12 @@ document.querySelector('[data-nav-home]').addEventListener('click', ()=>{
 function renderGrid(){
   const grid = document.getElementById('grid');
   let list = state.products;
-  if(state.activeCategory !== '全部'){ list = list.filter(p => p.category === state.activeCategory); }
+  if(state.activeCategory !== '全部'){
+    list = list.filter(p => {
+      const cats = (p.categories && p.categories.length) ? p.categories : (p.category ? [p.category] : []);
+      return cats.includes(state.activeCategory);
+    });
+  }
   if(list.length === 0){
     grid.innerHTML = `<div class="empty" style="grid-column:1/-1;">目前這個分類還沒有商品${state.adminMode ? '，從左側選單「+ 新增商品」開始吧' : ''}</div>`;
     return;
@@ -613,10 +658,11 @@ function renderGrid(){
     const mediaCount = gallery.length + (p.video_url ? 1 : 0);
     const stockLabel = hasVariants(p) ? ('規格庫存合計 '+totalStock(p)+' 件') : (p.stock_qty!=null ? '庫存 '+p.stock_qty+' 件' : '不追蹤庫存');
     return `
-    <div class="card">
+    <div class="card" data-product-id="${p.id}">
+      ${state.adminMode && state.activeCategory==='全部' ? '<div class="drag-handle" title="長按拖曳排序">⠿⠿</div>' : ''}
       ${soldOut ? '<span class="soldout-badge">已售完</span>' : ''}
       <div class="img-wrap" data-open-gallery="${p.id}">
-        <img src="${escAttr(coverImage(p, colors[0]))}" alt="${escAttr(p.name)}" loading="lazy" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
+        <img src="${escAttr(coverImage(p, colors[0]))}" alt="${escAttr(p.name)}" loading="lazy" draggable="false" oncontextmenu="return false" onerror="this.style.background='#e4dfd3';this.alt='圖片載入失敗'">
         ${mediaCount > 1 ? `<span class="media-badge">${p.video_url ? '▶ ' : ''}${gallery.length > 1 ? '📷 '+gallery.length : ''}</span>` : ''}
       </div>
       <div class="info">
@@ -636,6 +682,31 @@ function renderGrid(){
   `}).join('');
 
   bindGridEvents(grid);
+  initGridSortable();
+}
+
+let gridSortableInstance = null;
+function initGridSortable(){
+  if(gridSortableInstance){ gridSortableInstance.destroy(); gridSortableInstance = null; }
+  if(!state.adminMode || state.activeCategory !== '全部' || typeof Sortable === 'undefined') return;
+  const gridEl = document.getElementById('grid');
+  gridSortableInstance = Sortable.create(gridEl, {
+    handle: '.drag-handle',
+    delay: 300,
+    delayOnTouchOnly: true,
+    animation: 150,
+    onEnd: async function(){
+      const ids = [...gridEl.querySelectorAll('[data-product-id]')].map(el => el.dataset.productId);
+      const reordered = ids.map(id => state.products.find(p => p.id === id)).filter(Boolean);
+      const rest = state.products.filter(p => !ids.includes(p.id));
+      state.products = [...reordered, ...rest];
+      try{
+        await Promise.all(ids.map((id, i) => sb.from('products').update({ sort_order: i }).eq('id', id)));
+      }catch(err){
+        alert('排序儲存失敗，請重新整理再試一次');
+      }
+    }
+  });
 }
 
 function renderPickRowInner(p, pid){
@@ -845,12 +916,17 @@ let galleryMedia = [];
 let galleryIndex = 0;
 
 function rebuildGalleryMedia(p){
-  const photos = photosForColor(p, galleryColor);
+  const gallery = galleryOf(p);
   galleryMedia = [
-    ...photos.map(m => ({ type:'image', url:m.url })),
+    ...gallery.map(m => ({ type:'image', url:m.url, color:m.color||'' })),
     ...(p.video_url ? [{ type:'video', url:p.video_url }] : [])
   ];
-  galleryIndex = 0;
+  if(galleryColor){
+    const idx = galleryMedia.findIndex(m => m.color === galleryColor);
+    galleryIndex = idx >= 0 ? idx : 0;
+  } else {
+    galleryIndex = 0;
+  }
 }
 
 function openGallery(productId, initialColor){
@@ -875,15 +951,29 @@ function renderGalleryMain(){
   const main = document.getElementById('galleryMain');
   const m = galleryMedia[galleryIndex];
   if(!m){ main.innerHTML = ''; return; }
-  main.innerHTML = m.type === 'video' ? `<video src="${escAttr(m.url)}" controls playsinline></video>` : `<img src="${escAttr(m.url)}" alt="">`;
+  main.innerHTML = m.type === 'video'
+    ? `<video src="${escAttr(m.url)}" controls playsinline></video>`
+    : `<img src="${escAttr(m.url)}" alt="" draggable="false" oncontextmenu="return false">`;
 }
+let galleryTouchStartX = null;
+document.getElementById('galleryMain').addEventListener('touchstart', (e)=>{
+  galleryTouchStartX = e.touches[0].clientX;
+}, {passive:true});
+document.getElementById('galleryMain').addEventListener('touchend', (e)=>{
+  if(galleryTouchStartX===null || galleryMedia.length<=1) return;
+  const dx = e.changedTouches[0].clientX - galleryTouchStartX;
+  galleryTouchStartX = null;
+  if(Math.abs(dx) < 40) return;
+  if(dx < 0 && galleryIndex < galleryMedia.length-1){ galleryIndex++; renderGalleryMain(); renderGalleryThumbs(); }
+  else if(dx > 0 && galleryIndex > 0){ galleryIndex--; renderGalleryMain(); renderGalleryThumbs(); }
+}, {passive:true});
 function renderGalleryThumbs(){
   const wrap = document.getElementById('galleryThumbs');
   if(galleryMedia.length <= 1){ wrap.innerHTML = ''; return; }
   wrap.innerHTML = galleryMedia.map((m,i) =>
     m.type === 'video'
       ? `<div class="g-thumb is-video ${i===galleryIndex?'active':''}" data-gidx="${i}">▶</div>`
-      : `<img class="g-thumb ${i===galleryIndex?'active':''}" data-gidx="${i}" src="${escAttr(m.url)}">`
+      : `<img class="g-thumb ${i===galleryIndex?'active':''}" data-gidx="${i}" src="${escAttr(m.url)}" draggable="false" oncontextmenu="return false">`
   ).join('');
   wrap.querySelectorAll('[data-gidx]').forEach(el=>{
     el.addEventListener('click', ()=>{ galleryIndex = Number(el.dataset.gidx); renderGalleryMain(); renderGalleryThumbs(); });
@@ -982,6 +1072,7 @@ document.getElementById('sbSettings').addEventListener('click', ()=>{ closeSideb
 function openSettingsModal(){
   document.getElementById('setBrandName').value = state.settings.brand_name || '';
   document.getElementById('setBrandTag').value = state.settings.brand_tag || '';
+  document.getElementById('setAnnouncement').value = state.settings.announcement || '';
   if(state.settings.banner_url){
     document.getElementById('bannerPreviewImg').src = state.settings.banner_url;
     document.getElementById('bannerPreviewWrap').classList.add('show');
@@ -1000,9 +1091,10 @@ function openSettingsModal(){
 document.getElementById('saveBrandBtn').addEventListener('click', async ()=>{
   const brand_name = document.getElementById('setBrandName').value.trim();
   const brand_tag = document.getElementById('setBrandTag').value.trim();
-  const { error } = await sb.from('settings').update({ brand_name, brand_tag }).eq('id',1);
+  const announcement = document.getElementById('setAnnouncement').value.trim();
+  const { error } = await sb.from('settings').update({ brand_name, brand_tag, announcement }).eq('id',1);
   if(error){ alert('儲存失敗：'+error.message); return; }
-  state.settings.brand_name = brand_name; state.settings.brand_tag = brand_tag;
+  state.settings.brand_name = brand_name; state.settings.brand_tag = brand_tag; state.settings.announcement = announcement;
   renderBrand();
   alert('已儲存');
 });
@@ -1198,7 +1290,31 @@ document.addEventListener('change', async (e)=>{
 function optionsWithAdd(arr){
   return (arr||[]).map(v => `<option value="${escAttr(v)}">${escHtml(v)}</option>`).join('') + `<option value="__add_new__">+ 新增選項...</option>`;
 }
-function renderCategoryOptions(){ document.getElementById('pCategory').innerHTML = optionsWithAdd(state.settings.categories); }
+let selectedCategories = [];
+function renderCategoryChecks(){
+  const wrap = document.getElementById('pCategoryChecks');
+  wrap.innerHTML = (state.settings.categories||[]).map(c => `
+    <label class="${selectedCategories.includes(c)?'is-checked':''}"><input type="checkbox" value="${escAttr(c)}" ${selectedCategories.includes(c)?'checked':''} data-cat-check>${escHtml(c)}</label>
+  `).join('') || `<span style="font-size:11px; color:var(--ink-soft);">還沒有分類，用下面「+ 新增分類選項」建立</span>`;
+  wrap.querySelectorAll('[data-cat-check]').forEach(cb=>{
+    cb.addEventListener('change', ()=>{
+      selectedCategories = [...wrap.querySelectorAll('[data-cat-check]:checked')].map(x=>x.value);
+      cb.closest('label').classList.toggle('is-checked', cb.checked);
+    });
+  });
+}
+document.querySelector('[data-open-cat-add]').addEventListener('click', async ()=>{
+  const v = prompt('請輸入新的分類名稱：');
+  if(!v || !v.trim()) return;
+  const val = v.trim();
+  if(!state.settings.categories.includes(val)){
+    state.settings.categories.push(val);
+    await sb.from('settings').update({ categories: state.settings.categories }).eq('id',1);
+    renderFilters();
+  }
+  if(!selectedCategories.includes(val)) selectedCategories.push(val);
+  renderCategoryChecks();
+});
 function renderVariantColorSizeOptions(){
   document.getElementById('vColor').innerHTML = '<option value="">（不分顏色）</option>' + optionsWithAdd(state.settings.colors);
   document.getElementById('vSize').innerHTML = '<option value="">（不分尺寸）</option>' + optionsWithAdd(state.settings.sizes);
@@ -1331,11 +1447,10 @@ document.getElementById('addVariantBtn').addEventListener('click', ()=>{
 
 function openProductModal(id){
   document.getElementById('productErr').classList.remove('show');
-  renderCategoryOptions();
   renderVariantColorSizeOptions();
   const form = document.getElementById('productForm');
   form.reset();
-  currentImages = []; currentVideoUrl = ''; currentVariants = [];
+  currentImages = []; currentVideoUrl = ''; currentVariants = []; selectedCategories = [];
   document.getElementById('pImageUploadStatus').textContent = '';
   document.getElementById('pVideoPreviewWrap').style.display = 'none';
   document.getElementById('pVideoUploadStatus').textContent = '';
@@ -1346,7 +1461,7 @@ function openProductModal(id){
     document.getElementById('pId').value = p.id;
     document.getElementById('pName').value = p.name;
     document.getElementById('pPrice').value = p.price;
-    document.getElementById('pCategory').value = p.category;
+    selectedCategories = (p.categories && p.categories.length) ? [...p.categories] : (p.category ? [p.category] : []);
     currentImages = [...galleryOf(p)];
     if(p.video_url){
       currentVideoUrl = p.video_url;
@@ -1371,7 +1486,7 @@ function openProductModal(id){
     document.getElementById('pId').value = '';
     del.style.display = 'none';
   }
-  renderImageGallery(); renderVariantList();
+  renderImageGallery(); renderVariantList(); renderCategoryChecks();
   showOverlay('productOverlay');
 }
 
@@ -1392,7 +1507,8 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
   const data = {
     name: document.getElementById('pName').value.trim(),
     price: Number(document.getElementById('pPrice').value),
-    category: document.getElementById('pCategory').value,
+    category: selectedCategories[0] || '',
+    categories: selectedCategories,
     image: currentImages[0].url,
     images: currentImages.map(im => im.url),
     photo_gallery: currentImages,
