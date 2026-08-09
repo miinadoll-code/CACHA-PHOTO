@@ -319,6 +319,7 @@
     <div class="gallery-thumbs" id="galleryThumbs"></div>
     <h3 id="galleryName" style="margin:14px 0 2px;"></h3>
     <div class="price" id="galleryPrice" style="font-family:'Noto Serif TC',serif; font-weight:700; font-size:16px;"></div>
+    <div id="galleryDescription" style="font-size:13px; color:var(--ink-soft); white-space:pre-line; margin-top:8px; display:none;"></div>
     <div class="pick-row" id="galleryPickRow" style="margin-top:10px;"></div>
     <button class="submit-btn" id="galleryAddBtn">加入清單</button>
   </div>
@@ -362,6 +363,7 @@
         <div id="variantList"></div>
       </div>
       <div class="field"><label>備註小標（選填，例如「闆娘大力推薦」）</label><input type="text" id="pNote"></div>
+      <div class="field"><label>商品描述（選填，客人點開商品照片瀏覽時會看到）</label><textarea id="pDescription" placeholder="例如：材質、版型、洗滌方式、穿搭建議…"></textarea></div>
       <div class="field"><label><input type="checkbox" id="pSoldOut" style="width:auto; margin-right:6px;">標記為售完（會覆蓋規格庫存的判斷，強制下架）</label></div>
       <button type="submit" class="submit-btn">儲存商品</button>
       <button type="button" id="deleteProductBtn" style="display:none; width:100%; margin-top:8px; padding:10px; background:#fff; border:1px solid var(--danger); color:var(--danger); cursor:pointer; border-radius:2px;">刪除此商品</button>
@@ -455,7 +457,7 @@
 </div>
 
 <script>
-const SUPABASE_URL = 'https://lvazkqgnzdlolqbqooci.supabase.co';
+const SUPABASE_URL = ' https://lvazkqgnzdlolqbqooci.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx2YXprcWduemRsb2xxYnFvb2NpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYyMDc3MDksImV4cCI6MjEwMTc4MzcwOX0.F2HQlujLQJKOJPANUjuKzRFhTNHo1lQu2gsSBSUqXNM';
 
 if(SUPABASE_URL === 'YOUR_SUPABASE_URL' || SUPABASE_ANON_KEY === 'YOUR_SUPABASE_ANON_KEY'){
@@ -859,6 +861,13 @@ function openGallery(productId, initialColor){
   rebuildGalleryMedia(p);
   document.getElementById('galleryName').textContent = p.name;
   document.getElementById('galleryPrice').textContent = 'NT$ ' + Number(p.price).toLocaleString();
+  const descEl = document.getElementById('galleryDescription');
+  if(p.description && p.description.trim()){
+    descEl.textContent = p.description.trim();
+    descEl.style.display = 'block';
+  } else {
+    descEl.style.display = 'none';
+  }
   renderGalleryMain(); renderGalleryThumbs(); renderGalleryPickRow(p);
   showOverlay('galleryOverlay');
 }
@@ -1345,6 +1354,7 @@ function openProductModal(id){
       document.getElementById('pVideoPreviewWrap').style.display = 'block';
     }
     document.getElementById('pNote').value = p.note || '';
+    document.getElementById('pDescription').value = p.description || '';
     document.getElementById('pSoldOut').checked = !!p.sold_out;
     if(hasVariants(p)){
       currentVariants = p.variants.map(v => ({ id:v.id||cryptoId(), color:v.color||'', size:v.size||'', stock:Number(v.stock)||0 }));
@@ -1391,6 +1401,7 @@ document.getElementById('productForm').addEventListener('submit', async e=>{
     variants: currentVariants,
     stock_qty: null,
     note: document.getElementById('pNote').value.trim(),
+    description: document.getElementById('pDescription').value.trim(),
     sold_out: document.getElementById('pSoldOut').checked
   };
   const { error } = id
